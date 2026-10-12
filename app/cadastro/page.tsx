@@ -45,6 +45,13 @@ export default function Cadastro(){
                              <input type= "password" name="senha" id= "senha">
                             </input>
                         </div>
+                        <div>
+                            <button type = "submit">CRIAR CONTA</button>
+                        </div>
+                        <div>
+                            <label>Já possui uma conta?</label>
+                            <button type ="button"> Login</button>
+                        </div>
                     </fieldset>
                     
                 </form>
