@@ -60,9 +60,12 @@ export default function Cadastro(){
                             placeholder="Confirmar Senha"
                             className="w-full bg-transparent outline-none text-gray-700 font-bold placeholder-gray-700" />
                         </div>
-                        <div>
-                            <button type = "submit">CRIAR CONTA</button>
-                        </div>
+                        
+                            <button 
+                            type = "submit"
+                            className="flex justify-center items-center rounded-3xl bg-purple-900 w-[504px] h-[48px] text-white mx-auto"
+                            >CRIAR CONTA</button>
+                        
                         <div>
                             <label>Já possui uma conta?</label>
                             <button type ="button"> Login</button>
