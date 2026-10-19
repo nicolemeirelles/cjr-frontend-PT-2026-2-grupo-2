@@ -19,31 +19,46 @@ export default function Cadastro(){
                     CRIE SUA CONTA
                 </h1>
                 <form>
-                    <fieldset>
-                        <div>
-                            <label>Nome Completo</label>
-                            <input type="text" name = "nome" id="nome">
-                            </input>
+                    <fieldset className="flex flex-col gap-6">
+                        <div className="bg-amber-50 rounded-3xl w-[504px] h-[48px] mx-auto px-5 flex items-center">
+                            <input 
+                            type="text" 
+                            name="nome" 
+                            id="nome" 
+                            placeholder="Nome Completo"
+                            className="w-full bg-transparent outline-none text-gray-700 font-bold placeholder-gray-700"/>
                         </div>
-                        <div>
-                            <label>Username</label>
-                            <input type= "string" name="username" id="username">
-                            </input>
+                        <div className="bg-amber-50 rounded-3xl w-[504px] h-[48px] mx-auto px-5 flex items-center">
+                            <input 
+                            type="string" 
+                            name="username" 
+                            id="username" 
+                            placeholder="Username"
+                            className="w-full bg-transparent outline-none text-gray-700 font-bold placeholder-gray-700" />
                         </div>
-                        <div>
-                            <label>E-mail</label>
-                            <input type= "e-mail" name= "e-mail" id= "e-mail">
-                            </input>
+                        <div className="bg-amber-50 rounded-3xl w-[504px] h-[48px] mx-auto px-5 flex items-center">
+                            <input 
+                            type="e-mail" 
+                            name="e-mail" 
+                            id="e-mail" 
+                            placeholder="E-mail"
+                            className="w-full bg-transparent outline-none text-gray-700 font-bold placeholder-gray-700" />
                         </div>
-                        <div>
-                            <label>Senha</label>
-                            <input type= "password" name="senha" id= "senha">
-                            </input>
+                        <div className="bg-amber-50 rounded-3xl w-[504px] h-[48px] mx-auto px-5 flex items-center">
+                            <input 
+                            type="password" 
+                            name="senha" 
+                            id="senha" 
+                            placeholder="Senha"
+                            className="w-full bg-transparent outline-none text-gray-700 font-bold placeholder-gray-700" />
                         </div>
-                        <div>
-                            <label>Confirmar Senha</label>
-                             <input type= "password" name="senha" id= "senha">
-                            </input>
+                        <div className="bg-amber-50 rounded-3xl w-[504px] h-[48px] mx-auto px-5 flex items-center">
+                            <input 
+                            type="password" 
+                            name="senha" 
+                            id="senha" 
+                            placeholder="Confirmar Senha"
+                            className="w-full bg-transparent outline-none text-gray-700 font-bold placeholder-gray-700" />
                         </div>
                         <div>
                             <button type = "submit">CRIAR CONTA</button>
