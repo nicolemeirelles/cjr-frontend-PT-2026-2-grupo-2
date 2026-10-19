@@ -66,13 +66,15 @@ export default function Cadastro(){
                             className="flex justify-center items-center rounded-3xl bg-purple-900 w-[504px] h-[48px] text-white mx-auto"
                             >CRIAR CONTA</button>
                         
-                        <div>
-                            <label>Já possui uma conta?</label>
-                            <button type ="button"> Login</button>
-                        </div>
+                       
                     </fieldset>
                     
                 </form>
+                 <div className= "flex flex-row gap-2 items-center mt-2 px-5 w-[282px] h-[23px]">
+                            <h1 className=" text-white">Já possui uma conta?</h1>
+                            <button className= " text-purple-900" 
+                            type ="button"> Login</button>
+                        </div>
             </div>
             
 
