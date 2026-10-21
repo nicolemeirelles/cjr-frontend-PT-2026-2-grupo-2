@@ -2,7 +2,7 @@
 import React, {useState} from 'react';
 import Image from 'next/image';
 import {useRouter} from "next/navigation";
-import api from "@/lib/api";
+
 
 type Task = {
     id: number;
@@ -17,7 +17,7 @@ type Task = {
 export default function Cadastro(){
 
     return (
-        <div className="flex flex-col h-screen bg-amber-50 overflow-hidden">
+        <div className="flex flex-row h-screen bg-amber-50 overflow-hidden gap-20 ">
             <div className= "w-[654px] h-[1068px] bg-gray-950 rounded-t-[40px] items-start justify-start ml-[150px] mt-[113px] p-12">
                 <h1 className= "text-3xl font-extrabold text-center mb-6 text-amber-50">
                     CRIE SUA CONTA
@@ -80,6 +80,14 @@ export default function Cadastro(){
                             type ="button"> Login</button>
                         </div>
             </div>
+            
+           <div className= "flex flex-col items-center">
+            <Image src="/logo.svg" alt="Logo Stock.io" width={350} height={100}
+           className="w-auto h-auto ml-[250px] mt-[-20px]"
+           />
+           <Image src="/mascotelogin.svg" alt="Mascote Login Stock.io"  width={496} height={1128} className="ml-[250px] mt-[10px]"
+           />
+           </div>
             
 
         </div>
