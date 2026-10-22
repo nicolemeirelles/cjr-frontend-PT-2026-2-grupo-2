@@ -29,7 +29,7 @@ export default function Cadastro(){
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setErro('');
-    }
+    
     if (!formData.name || !formData.username || !formData.email || !formData.password || !formData.confirmPassword) {
             setErro('Por favor, preencha todos os campos obrigatórios.');
             return;
@@ -49,13 +49,15 @@ export default function Cadastro(){
                 <h1 className= "text-3xl font-extrabold text-center mb-6 text-amber-50">
                     CRIE SUA CONTA
                 </h1>
-                <form>
+                <form onSubmit={handleSubmit}>
                     <fieldset className="flex flex-col gap-6">
                         <div className="bg-amber-50 rounded-3xl w-[504px] h-[48px] mx-auto px-5 flex items-center">
                             <input 
                             type="text" 
                             name="name" 
                             id="name" 
+                            value={formData.name}
+                            onChange={handleInputChange}
                             placeholder="Nome Completo"
                             
                             className="w-full bg-transparent outline-none text-gray-700 font-light placeholder-gray-700"/>
@@ -66,6 +68,8 @@ export default function Cadastro(){
                             name="username" 
                             id="username" 
                             placeholder="Username"
+                            value={formData.username}
+                            onChange={handleInputChange}
                             className="w-full bg-transparent outline-none text-gray-700 font-light placeholder-gray-700" />
                         </div>
                         <div className="bg-amber-50 rounded-3xl w-[504px] h-[48px] mx-auto px-5 flex items-center">
@@ -74,7 +78,8 @@ export default function Cadastro(){
                             name="e-mail" 
                             id="e-mail" 
                             placeholder="E-mail"
-                            value="email"
+                            value={formData.email}
+                            onChange={handleInputChange}
                             className="w-full bg-transparent outline-none text-gray-700 font-light placeholder-gray-700" />
                         </div>
                         <div className="bg-amber-50 rounded-3xl w-[504px] h-[48px] mx-auto px-5 flex items-center">
@@ -83,14 +88,18 @@ export default function Cadastro(){
                             name="password" 
                             id="password" 
                             placeholder="Senha"
+                            value={formData.password}
+                            onChange={handleInputChange}
                             className="w-full bg-transparent outline-none text-gray-700 font-light placeholder-gray-700" />
                         </div>
                         <div className="bg-amber-50 rounded-3xl w-[504px] h-[48px] mx-auto px-5 flex items-center">
                             <input 
                             type="password" 
-                            name="password" 
-                            id="password" 
+                            name="confirmPassword" 
+                            id="confirmPassword" 
                             placeholder="Confirmar Senha"
+                            value={formData.confirmPassword}
+                            onChange={handleInputChange}
                             className="w-full bg-transparent outline-none text-gray-700 font-light placeholder-gray-700" />
                         </div>
                         
