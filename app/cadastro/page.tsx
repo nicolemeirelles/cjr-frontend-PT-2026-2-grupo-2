@@ -15,8 +15,35 @@ type Task = {
 
 }
 export default function Cadastro(){
+    const router = useRouter();
+    const[formData, setFormData] = useState({
+        name: '',
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+    })
+    const [erro, setErro] = useState('');
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        setErro('');
+    }
+    if (!formData.name || !formData.username || !formData.email || !formData.password || !formData.confirmPassword) {
+            setErro('Por favor, preencha todos os campos obrigatórios.');
+            return;
+        }
+    if (formData.password !== formData.confirmPassword) {
+            setErro('As senhas não coincidem.');
+            return;   
+    } 
+    alert('Cadastro realizado com sucesso!');
+        router.push('/login'); 
+    };
 
     return (
+        
         <div className="flex flex-row h-screen bg-amber-50 overflow-hidden gap-20 ">
             <div className= "w-[654px] h-[1068px] bg-gray-950 rounded-t-[40px] items-start justify-start ml-[150px] mt-[113px] p-12">
                 <h1 className= "text-3xl font-extrabold text-center mb-6 text-amber-50">
@@ -27,9 +54,10 @@ export default function Cadastro(){
                         <div className="bg-amber-50 rounded-3xl w-[504px] h-[48px] mx-auto px-5 flex items-center">
                             <input 
                             type="text" 
-                            name="nome" 
-                            id="nome" 
+                            name="name" 
+                            id="name" 
                             placeholder="Nome Completo"
+                            
                             className="w-full bg-transparent outline-none text-gray-700 font-light placeholder-gray-700"/>
                         </div>
                         <div className="bg-amber-50 rounded-3xl w-[504px] h-[48px] mx-auto px-5 flex items-center">
@@ -46,21 +74,22 @@ export default function Cadastro(){
                             name="e-mail" 
                             id="e-mail" 
                             placeholder="E-mail"
+                            value="email"
                             className="w-full bg-transparent outline-none text-gray-700 font-light placeholder-gray-700" />
                         </div>
                         <div className="bg-amber-50 rounded-3xl w-[504px] h-[48px] mx-auto px-5 flex items-center">
                             <input 
                             type="password" 
-                            name="senha" 
-                            id="senha" 
+                            name="password" 
+                            id="password" 
                             placeholder="Senha"
                             className="w-full bg-transparent outline-none text-gray-700 font-light placeholder-gray-700" />
                         </div>
                         <div className="bg-amber-50 rounded-3xl w-[504px] h-[48px] mx-auto px-5 flex items-center">
                             <input 
                             type="password" 
-                            name="senha" 
-                            id="senha" 
+                            name="password" 
+                            id="password" 
                             placeholder="Confirmar Senha"
                             className="w-full bg-transparent outline-none text-gray-700 font-light placeholder-gray-700" />
                         </div>
