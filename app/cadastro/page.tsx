@@ -2,6 +2,8 @@
 import React, {useState} from 'react';
 import Image from 'next/image';
 import {useRouter} from "next/navigation";
+import { api } from '@/lib/api';
+
 
 
 type Task = {
@@ -26,6 +28,7 @@ export default function Cadastro(){
     const [erro, setErro] = useState('');
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setErro('');
@@ -41,7 +44,7 @@ export default function Cadastro(){
     alert('Cadastro realizado com sucesso!');
         router.push('/login'); 
     };
-
+    
     return (
         
         <div className="flex flex-row h-screen bg-amber-50 overflow-hidden gap-20 ">
@@ -74,9 +77,9 @@ export default function Cadastro(){
                         </div>
                         <div className="bg-amber-50 rounded-3xl w-[504px] h-[48px] mx-auto px-5 flex items-center">
                             <input 
-                            type="e-mail" 
-                            name="e-mail" 
-                            id="e-mail" 
+                            type="string" 
+                            name="email" 
+                            id="email" 
                             placeholder="E-mail"
                             value={formData.email}
                             onChange={handleInputChange}
