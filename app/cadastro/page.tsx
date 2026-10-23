@@ -16,10 +16,10 @@ export default function Cadastro(){
     const [mostrarSenha, setMostrarSenha] = useState(false);
     const [mostrarConfirmarSenha, setMostrarConfirmarSenha] = useState(false);
     const [erro, setErro] = useState('');
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
     const [loading, setLoading] = useState(false);
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+};
     const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErro('');
@@ -40,16 +40,28 @@ export default function Cadastro(){
             name: formData.name,
             username: formData.username,
             email: formData.email,
-            password: formData.password
+            password: formData.password,
+            confirmPassword: formData.confirmPassword
         });
 
         alert('Cadastro realizado com sucesso!');
         router.push('/login');
 
-    }  catch (error) {
-        console.error(error);
-        setErro('Ocorreu um erro ao criar a conta. Verifique os dados e tente novamente.');
-          } 
+    } catch (error: any) {
+        console.error("Detalhes do Erro da API:", error.response?.data);
+        
+        const backendMessage = error.response?.data?.message;
+        
+        if (Array.isArray(backendMessage)) {
+            setErro(`Erro: ${backendMessage[0]}`);
+        } else if (typeof backendMessage === 'string') {
+            setErro(backendMessage);
+        } else {
+            setErro('Ocorreu um erro de conexão com o servidor.');
+        }
+    } finally {
+        setLoading(false);
+    } 
 };
     
     return (
@@ -131,7 +143,7 @@ export default function Cadastro(){
                             <button type="submit" disabled={loading} 
                             className=" font-semibold flex justify-center items-center rounded-3xl bg-purple-900 w-[504px] h-[48px] text-white mx-auto">
                             CRIAR CONTA
-  </button>
+</button>
                        
                     </fieldset>
                     
