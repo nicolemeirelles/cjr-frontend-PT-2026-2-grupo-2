@@ -33,7 +33,7 @@ npm run start:dev
 
 O login passa pelo servidor Next.js. O exemplo de configuração do backend usa a porta 3001 e o frontend usa a 3000.
 
-Para testar o login com o banco real, utilize uma conta de teste previamente cadastrada na API. Não utilize dados pessoais nem senhas reais de outros serviços. A tela de cadastro será integrada separadamente.
+Para testar o login com o banco real, utilize uma conta de teste. Não utilize dados pessoais nem senhas reais de outros serviços. O link `/cadastro` abre a tela de cadastro desenvolvida pelo grupo.
 
 ## Estrutura do projeto
 
