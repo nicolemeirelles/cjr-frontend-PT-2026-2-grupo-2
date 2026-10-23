@@ -4,12 +4,6 @@ import Image from 'next/image';
 import {useRouter} from "next/navigation";
 import { api } from '../../lib/api';
 
-
-
-
-
-
-
 export default function Cadastro(){
     const router = useRouter();
     const[formData, setFormData] = useState({
@@ -19,6 +13,8 @@ export default function Cadastro(){
         password: '',
         confirmPassword: ''
     })
+    const [mostrarSenha, setMostrarSenha] = useState(false);
+    const [mostrarConfirmarSenha, setMostrarConfirmarSenha] = useState(false);
     const [erro, setErro] = useState('');
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -34,7 +30,7 @@ export default function Cadastro(){
     }
 
     if (formData.password !== formData.confirmPassword) {
-        setErro('As senhas não coincidem.');
+        setErro('As senhas não coincidem');
         return;
     }
 
@@ -50,10 +46,10 @@ export default function Cadastro(){
         alert('Cadastro realizado com sucesso!');
         router.push('/login');
 
-    } catch (error) {
+    }  catch (error) {
         console.error(error);
         setErro('Ocorreu um erro ao criar a conta. Verifique os dados e tente novamente.');
-    } 
+          } 
 };
     
     return (
@@ -99,28 +95,42 @@ export default function Cadastro(){
                         </div>
                         <div className="bg-amber-50 rounded-3xl w-[504px] h-[48px] mx-auto px-5 flex items-center">
                             <input 
-                            type="password" 
+                            type={mostrarSenha ? "text" : "password"}
                             name="password" 
                             id="password" 
                             placeholder="Senha"
                             value={formData.password}
                             onChange={handleInputChange}
                             className="w-full bg-transparent outline-none text-gray-700 font-light placeholder-gray-700" />
+                            <button 
+                            type="button" 
+                            onClick={() => setMostrarSenha(!mostrarSenha)}
+                            className="text-purple-900 text-sm font-medium ml-2 outline-none hover:opacity-70">
+                            {mostrarSenha ? "Ocultar" : "Ver"}
+                            </button>
                         </div>
+
                         <div className="bg-amber-50 rounded-3xl w-[504px] h-[48px] mx-auto px-5 flex items-center">
                             <input 
-                            type="password" 
+                            type={mostrarConfirmarSenha ? "text" : "password"}
                             name="confirmPassword" 
                             id="confirmPassword" 
                             placeholder="Confirmar Senha"
                             value={formData.confirmPassword}
                             onChange={handleInputChange}
                             className="w-full bg-transparent outline-none text-gray-700 font-light placeholder-gray-700" />
+                            <button 
+                            type="button" 
+                            onClick={() => setMostrarConfirmarSenha(!mostrarConfirmarSenha)}
+                            className="text-purple-900 text-sm font-medium ml-2 outline-none hover:opacity-70">
+                            {mostrarConfirmarSenha ? "Ocultar" : "Ver"}
+                            </button>
                         </div>
                         {erro && <p className="text-red-400 text-center text-sm">{erro}</p>}
                         
-                             <button type="submit" disabled={loading} className=" font-semibold flex justify-center items-center rounded-3xl bg-purple-900 w-[504px] h-[48px] text-white mx-auto">
-                            {loading ? 'CRIANDO...' : 'CRIAR CONTA'}
+                            <button type="submit" disabled={loading} 
+                            className=" font-semibold flex justify-center items-center rounded-3xl bg-purple-900 w-[504px] h-[48px] text-white mx-auto">
+                            CRIAR CONTA
   </button>
                        
                     </fieldset>
