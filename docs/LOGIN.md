@@ -53,7 +53,7 @@ O frame de referência mede 1440 × 1024. Nesse tamanho, o painel começa em x=7
 - Layout em desktop e celular de 390 px.
 - Requisições HTTP: origem inválida, dados incompletos, ausência de cookie em login recusado, cookie HttpOnly/SameSite/Secure, ausência do token no JSON público, token inválido e exclusão da sessão.
 
-Os testes funcionais locais usaram os controllers, services, bcrypt e JWT reais do backend com persistência substituída por dados em memória. Não havia PostgreSQL/Docker disponível neste computador. Portanto ainda é necessário repetir cadastro e login com o PostgreSQL do grupo; a persistência e as migrações não foram validadas aqui.
+O fluxo também foi validado com o backend real conectado ao PostgreSQL local. As migrações foram aplicadas e um usuário de teste foi criado pela API, confirmando a persistência e a senha em hash no banco. Foram verificados login pelo frontend, rejeição de senha incorreta, acesso à conta autenticada, logout e redirecionamento sem sessão. O cadastro foi feito pela API; o formulário de cadastro da outra branch não fez parte desse teste.
 
 ## Revisão antes da entrega
 
