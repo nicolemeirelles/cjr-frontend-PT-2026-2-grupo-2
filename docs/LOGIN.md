@@ -1,12 +1,6 @@
 # Entendendo e revisando o login
 
-## Escopo e base
-
-Implementação de login em uma branch criada diretamente de `dev`, commit `21c2487`, em 23/10/2026. Referência de integração do backend: `develop`, commit `d41fccf`.
-
-A base `dev` estava sem arquivos. Este PR inclui a estrutura necessária de Next.js, React, TypeScript e Tailwind, a tela de login e os assets utilizados por ela. Não inclui a página de cadastro, o cliente Axios nem os commits de implementação de outra tela. O link `/cadastro` depende da integração do PR de cadastro pelo grupo.
-
-O backend tinha modelos e migração PostgreSQL para usuários, lojas, categorias, produtos, imagens, recuperação de senha, avaliações e comentários. Isso não significa que todos esses recursos já tenham endpoints: os controllers existentes implementam usuários e autenticação. Também já havia hash de senha com bcrypt, DTOs, validação global, JWT e verificação de permissões para editar ou remover o próprio usuário.
+## Integração com o backend
 
 O backend da autenticação recebe `POST /login` com `{ email, password }`, devolve `{ access_token }` e usa `GET /me` com `Authorization: Bearer TOKEN` para consultar a conta. Credenciais inválidas retornam 401.
 
