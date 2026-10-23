@@ -20,36 +20,67 @@ export default function Cadastro(){
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
     const [loading, setLoading] = useState(false);
-    const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErro('');
+   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  setErro('');
 
-    if (!formData.name || !formData.username || !formData.email || !formData.password || !formData.confirmPassword) {
-        setErro('Por favor, preencha todos os campos obrigatórios.');
-        return;
-    }
+  if (
+    !formData.name.trim() ||
+    !formData.username.trim() ||
+    !formData.email.trim() ||
+    !formData.password ||
+    !formData.confirmPassword
+  ) {
+    setErro('Por favor, preencha todos os campos obrigatórios.');
+    return;
+  }
 
-    if (formData.password !== formData.confirmPassword) {
-        setErro('As senhas não coincidem');
-        return;
-    }
+  if (formData.password !== formData.confirmPassword) {
+    setErro('As senhas não coincidem.');
+    return;
+  }
 
-    try {
-        setLoading(true);
-        await api.post('/users', {
-            name: formData.name,
-            username: formData.username,
-            email: formData.email,
-            password: formData.password
-        });
+  if (formData.password.length < 6) {
+    setErro('A senha deve ter pelo menos 6 caracteres.');
+    return;
+  }
 
-        alert('Cadastro realizado com sucesso!');
-        router.push('/login');
+  try {
+    setLoading(true);
 
-    }  catch (error) {
-        console.error(error);
-        setErro('Ocorreu um erro ao criar a conta. Verifique os dados e tente novamente.');
-          } 
+    await api.post('/users', {
+      name: formData.name.trim(),
+      username: formData.username.trim(),
+      email: formData.email.trim(),
+      password: formData.password,
+      confirmPassword: formData.confirmPassword,
+    });
+
+    alert('Cadastro realizado com sucesso!');
+    router.push('/login');
+  } catch (error: unknown) {
+    console.error('Erro ao cadastrar usuário:', error);
+
+    const apiError = error as {
+      response?: {
+        data?: {
+          message?: string | string[];
+        };
+      };
+      message?: string;
+    };
+
+    const message = apiError.response?.data?.message;
+
+    setErro(
+      Array.isArray(message)
+        ? message.join(', ')
+        : message ||
+          'Não foi possível conectar ao servidor. Tente novamente.',
+    );
+  } finally {
+    setLoading(false);
+  }
 };
     
     return (
@@ -128,10 +159,11 @@ export default function Cadastro(){
                         </div>
                         {erro && <p className="text-red-400 text-center text-sm">{erro}</p>}
                         
-                            <button type="submit" disabled={loading} 
-                            className=" font-semibold flex justify-center items-center rounded-3xl bg-purple-900 w-[504px] h-[48px] text-white mx-auto">
-                            CRIAR CONTA
-  </button>
+                            <button
+                            type="submit" disabled={loading}
+                            className="font-semibold flex justify-center items-center rounded-3xl bg-purple-900 w-[504px] h-[48px] text-white mx-auto disabled:opacity-60">
+                            {loading ? 'Cadastrando...' : 'CRIAR CONTA'}
+</button>
                        
                     </fieldset>
                     
