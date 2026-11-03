@@ -6,6 +6,7 @@ import Icon from './Icon';
 import ProductCard from './ProductCard';
 type Props = {
   data: CatalogData;
+  categoryId?: number;
   initialQuery?: string;
   initialView?: string;
 };
@@ -17,10 +18,13 @@ function normalize(value: string) {
 }
 export default function Catalog({
   data,
+  categoryId,
   initialQuery = '',
   initialView = 'produtos',
 }: Props) {
   const [query, setQuery] = useState(initialQuery);
+  const [subcategory, setSubcategory] = useState<number | null>(null);
+  const [sort, setSort] = useState('default');
   const [view, setView] = useState(
     initialView === 'lojas' ? 'lojas' : 'produtos',
   );
@@ -28,6 +32,12 @@ export default function Catalog({
   const suffix = demo ? '?demo=1' : '';
   const roots = data.categories.filter(
     (category) => category.parentId === null,
+  );
+  const current = data.categories.find(
+    (category) => category.id === categoryId,
+  );
+  const children = data.categories.filter(
+    (category) => category.parentId === categoryId,
   );
   const term = normalize(query.trim());
   function belongsTo(product: Product, target: number): boolean {
@@ -42,10 +52,23 @@ export default function Catalog({
     }
     return false;
   }
-  const products = data.products.filter(
-    (product) =>
-      !term || normalize(`${product.name} ${product.storeName}`).includes(term),
-  );
+  function matches(product: Product): boolean {
+    if (subcategory !== null && product.categoryId !== subcategory)
+      return false;
+    if (categoryId !== undefined && !belongsTo(product, categoryId))
+      return false;
+    return (
+      !term || normalize(`${product.name} ${product.storeName}`).includes(term)
+    );
+  }
+  const products = data.products.filter(matches).sort((a, b) => {
+    if (sort === 'price-asc') return a.price - b.price;
+    if (sort === 'price-desc') return b.price - a.price;
+    if (sort === 'newest')
+      return (Date.parse(b.createdAt) || 0) - (Date.parse(a.createdAt) || 0);
+    if (sort === 'rating') return (b.rating ?? -1) - (a.rating ?? -1);
+    return 0;
+  });
   const sections: {
     category: Category;
     products: Product[];
@@ -55,13 +78,19 @@ export default function Catalog({
       products: products.filter((product) => belongsTo(product, category.id)),
     }))
     .filter((section) => section.products.length);
-  const showAll = Boolean(term) || view === 'lojas' || roots.length === 0;
+  const showAll =
+    categoryId !== undefined ||
+    Boolean(term) ||
+    view === 'lojas' ||
+    roots.length === 0;
   return (
     <div className="catalog-content">
       {demo && (
         <div className="catalog-demo-note">
           Demonstração com dados do protótipo.{' '}
-          <Link href="/">Usar dados da API</Link>
+          <Link href={categoryId ? `/categorias/${categoryId}` : '/'}>
+            Usar dados da API
+          </Link>
         </div>
       )}
       <form
@@ -83,25 +112,70 @@ export default function Catalog({
           <Icon name="search" size={21} />
         </button>
       </form>
-      <section
-        id="categorias"
-        className="catalog-categories"
-        aria-labelledby="categories-title"
-      >
-        <h2 id="categories-title">Categoria</h2>
-        <div className="catalog-category-list">
-          {roots.map((category) => (
-            <Link
-              key={category.id}
-              href={`/categorias/${category.id}${suffix}`}
-              className="catalog-category-item"
-            >
-              <Icon name={category.name} size={37} />
-              <span>{category.name}</span>
-            </Link>
-          ))}
+      {categoryId === undefined ? (
+        <section
+          id="categorias"
+          className="catalog-categories"
+          aria-labelledby="categories-title"
+        >
+          <h2 id="categories-title">Categoria</h2>
+          <div className="catalog-category-list">
+            {roots.map((category) => (
+              <Link
+                key={category.id}
+                href={`/categorias/${category.id}${suffix}`}
+                className="catalog-category-item"
+              >
+                <Icon name={category.name} size={37} />
+                <span>{category.name}</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+      ) : (
+        <div className="catalog-category-heading" id="categorias">
+          <div className="catalog-breadcrumb">
+            <Link href={`/${suffix}`}>Início</Link>
+            <span aria-hidden="true">/</span>
+            <h2>{current?.name ?? 'Categoria'}</h2>
+          </div>
+          <div className="catalog-category-tools">
+            <div className="catalog-subcategories" aria-label="Subcategorias">
+              <button
+                type="button"
+                aria-pressed={subcategory === null}
+                onClick={() => setSubcategory(null)}
+              >
+                Todos
+              </button>
+              {children.map((category) => (
+                <button
+                  key={category.id}
+                  type="button"
+                  aria-pressed={subcategory === category.id}
+                  onClick={() => setSubcategory(category.id)}
+                >
+                  {category.name}
+                </button>
+              ))}
+            </div>
+            <label className="catalog-sort">
+              <span className="catalog-sr-only">Ordenar produtos</span>
+              <select
+                value={sort}
+                onChange={(event) => setSort(event.target.value)}
+              >
+                <option value="default">ordenar por</option>
+                <option value="price-asc">Menor preço</option>
+                <option value="price-desc">Maior preço</option>
+                <option value="newest">Recém-adicionados</option>
+                <option value="rating">Melhor avaliados</option>
+              </select>
+              <Icon name="chevron" size={20} />
+            </label>
+          </div>
         </div>
-      </section>
+      )}
       <section id="produtos" aria-label="Catálogo de produtos">
         <div className="catalog-results-controls">
           {(term || view === 'lojas') && (
@@ -138,33 +212,48 @@ export default function Catalog({
               <button onClick={() => window.location.reload()}>
                 Tentar novamente
               </button>
-              <Link href="/?demo=1">Ver demonstração do protótipo</Link>
+              <Link
+                href={
+                  categoryId ? `/categorias/${categoryId}?demo=1` : '/?demo=1'
+                }
+              >
+                Ver demonstração do protótipo
+              </Link>
             </div>
           </div>
         )}
-        {!data.error && products.length === 0 && (
-          <div className="catalog-message" role="status">
-            <h2>
-              {term
-                ? 'Nenhum resultado encontrado'
-                : 'Nenhum produto por aqui ainda'}
-            </h2>
-            <p>
-              {term
-                ? 'Tente outro nome de produto ou loja.'
-                : 'Os produtos aparecerão aqui quando forem cadastrados.'}
-            </p>
-            {term && (
-              <button
-                onClick={() => {
-                  setQuery('');
-                }}
-              >
-                Limpar filtros
-              </button>
-            )}
+        {!data.error && categoryId !== undefined && !current && (
+          <div className="catalog-message">
+            <h2>Categoria não encontrada</h2>
+            <Link href={`/${suffix}`}>Voltar ao início</Link>
           </div>
         )}
+        {!data.error &&
+          products.length === 0 &&
+          (categoryId === undefined || current) && (
+            <div className="catalog-message" role="status">
+              <h2>
+                {term
+                  ? 'Nenhum resultado encontrado'
+                  : 'Nenhum produto por aqui ainda'}
+              </h2>
+              <p>
+                {term
+                  ? 'Tente outro nome de produto ou loja.'
+                  : 'Os produtos aparecerão aqui quando forem cadastrados.'}
+              </p>
+              {(term || subcategory !== null) && (
+                <button
+                  onClick={() => {
+                    setQuery('');
+                    setSubcategory(null);
+                  }}
+                >
+                  Limpar filtros
+                </button>
+              )}
+            </div>
+          )}
         {showAll ? (
           view === 'lojas' ? (
             Array.from(
