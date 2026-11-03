@@ -1,19 +1,23 @@
-# Home
+# Home e categoria
+
+A branch `tela-home` entrega a Home e os componentes compartilhados. `tela-categoria` parte dessa base e acrescenta a página de categoria, seu banner, subcategorias e ordenação. O PR da Home deve ser integrado antes do PR da categoria para `dev`.
 
 ## Rotas
 
 - `/`: catálogo conectado ao backend.
+- `/categorias/ID`: produtos da categoria e suas subcategorias.
 - `/?demo=1`: demonstração identificada com os produtos do Figma.
+- `/categorias/5?demo=1`: categoria Eletrônicos da demonstração.
 
 Os IDs da demonstração não representam os IDs do banco. O modo real usa os IDs recebidos da API e não mistura produtos de exemplo em respostas reais.
 
 ## Organização
 
-`app/components/catalog` contém navbar, ícones, cards, busca e estilos compartilhados. `CatalogPage` consulta a sessão e os dados no servidor; `Catalog` controla busca e agrupamento por loja no navegador.
+`app/components/catalog` contém navbar, ícones, cards, busca, filtros e estilos compartilhados. `CatalogPage` consulta a sessão e os dados no servidor; `Catalog` controla busca, agrupamento por loja, subcategoria e ordenação no navegador.
 
 `lib/catalog/api.ts` consulta o backend, valida as respostas e converte os valores para os tipos da interface. `demo.ts` contém apenas os dados de demonstração. As imagens de produtos e ilustrações foram extraídas dos SVGs fornecidos do Figma.
 
-O arquivo `public/catalogo/mascote-home.svg` é a exportação individual da personagem. O CSS controla o tamanho e o recorte no banner. `logo-clara.svg` contém a logo separada do cabeçalho exportado; os links e botões da navbar são elementos HTML.
+Os arquivos `public/catalogo/mascote-home.svg` e `mascote-eletronicos.svg` são as exportações individuais dos personagens. O CSS controla o tamanho e o recorte no banner. `logo-clara.svg` contém a logo separada do cabeçalho exportado; os links e botões da navbar são elementos HTML.
 
 ## Conexão com o backend
 
@@ -25,8 +29,6 @@ As respostas podem ser um array ou `{ data: [...] }`. Categorias devem ter `id`,
 
 O token existente é enviado pelo servidor quando há sessão. Não é exposto no JavaScript do navegador. Erros de conexão, acesso, endpoint ausente e formato inválido têm tratamento. Respostas vazias exibem um estado próprio, diferente de erro.
 
-A busca e o agrupamento por loja atuam sobre a lista recebida. O contrato inicial pressupõe uma lista completa; paginação e busca no servidor precisam de ajuste conjunto quando o backend definir esses recursos. A busca encontra nomes de produtos e de lojas com produtos carregados; não consulta uma listagem independente de lojas.
+Busca, filtros e ordenação atuam sobre a lista recebida. O contrato inicial pressupõe uma lista completa; paginação e busca no servidor precisam de ajuste conjunto quando o backend definir esses recursos. A busca encontra nomes de produtos e de lojas com produtos carregados; não consulta uma listagem independente de lojas.
 
 Os cards são informativos: a página de detalhes de produto e a página própria da loja são entregas separadas. Não foram criados links para rotas que ainda não existem. O login e o cadastro existentes foram preservados; após login, `/conta` continua sendo a confirmação da sessão, com a Home acessível pela URL `/`.
-
-Os links de categorias e “ver mais” apontam para `/categorias/ID`, cuja página é entregue na branch `tela-categoria`. Essa branch depende dos componentes e da integração da Home.

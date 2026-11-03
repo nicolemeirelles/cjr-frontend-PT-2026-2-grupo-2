@@ -1,11 +1,13 @@
 import { League_Spartan } from 'next/font/google';
 import Image from 'next/image';
+import { notFound } from 'next/navigation';
 import { getCatalog } from '@/lib/catalog/api';
 import { getDemoCatalog } from '@/lib/catalog/demo';
 import { getCurrentUser } from '@/lib/auth';
 import Navbar from './Navbar';
 import Catalog from './Catalog';
 import './catalog.css';
+import './category.css';
 const leagueSpartan = League_Spartan({ subsets: ['latin'], display: 'swap' });
 export type CatalogSearch = {
   demo?: string;
@@ -24,42 +26,78 @@ export function CatalogFallback() {
   );
 }
 export default async function CatalogPage({
+  params,
   searchParams,
 }: {
+  params?: Promise<{
+    id: string;
+  }>;
   searchParams: Promise<CatalogSearch>;
 }) {
-  const search = await searchParams;
+  const [search, route] = await Promise.all([searchParams, params]);
   const demo = search.demo === '1';
   const [data, session] = await Promise.all([
     demo ? getDemoCatalog() : getCatalog(),
     getCurrentUser(),
   ]);
+  const categoryId = route ? Number(route.id) : undefined;
+  if (
+    categoryId !== undefined &&
+    (!Number.isSafeInteger(categoryId) || categoryId <= 0)
+  )
+    notFound();
+  const category = data.categories.find((item) => item.id === categoryId);
+  const electronics =
+    category?.name
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase() === 'eletronicos';
   return (
     <div className={`catalog-page ${leagueSpartan.className}`}>
       <Navbar authenticated={session.status === 'authenticated'} demo={demo} />
       <main>
         <section
-          className="catalog-hero"
-          aria-label="Bem-vindo ao Stock.io"
+          className={`catalog-hero ${electronics ? 'catalog-hero-electronics' : ''}`}
+          aria-label={
+            category ? `Categoria ${category.name}` : 'Bem-vindo ao Stock.io'
+          }
         >
           <div className="catalog-hero-inner">
             <h1>
-              Do CAOS à organização,
-              <br />
-              em alguns cliques
+              {electronics ? (
+                <>
+                  O universo da tecnologia
+                  <br />
+                  em um só lugar
+                </>
+              ) : category ? (
+                <>
+                  {category.name}
+                  <br />
+                  Encontre o que combina com você
+                </>
+              ) : (
+                <>
+                  Do CAOS à organização,
+                  <br />
+                  em alguns cliques
+                </>
+              )}
             </h1>
             <Image
-              src="/catalogo/mascote-home.svg"
+              src={`/catalogo/mascote-${electronics ? 'eletronicos' : 'home'}.svg`}
               alt=""
-              width={832}
-              height={1129}
+              width={electronics ? 425 : 832}
+              height={electronics ? 1097 : 1129}
               unoptimized
               priority
             />
           </div>
         </section>
         <Catalog
+          key={categoryId ?? 'home'}
           data={data}
+          categoryId={categoryId}
           initialQuery={search.q}
           initialView={search.view}
         />
