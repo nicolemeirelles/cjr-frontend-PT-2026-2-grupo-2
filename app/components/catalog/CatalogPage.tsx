@@ -1,7 +1,7 @@
 import { League_Spartan } from 'next/font/google';
 import Image from 'next/image';
-import { getCatalog } from '@/lib/catalog/api';
 import { getDemoCatalog } from '@/lib/catalog/demo';
+import type { CatalogData } from '@/lib/catalog/types';
 import { getCurrentUser } from '@/lib/auth';
 import Navbar from './Navbar';
 import Catalog from './Catalog';
@@ -25,15 +25,14 @@ export function CatalogFallback() {
 }
 export default async function CatalogPage({
   searchParams,
+  data = getDemoCatalog(),
 }: {
   searchParams: Promise<CatalogSearch>;
+  data?: CatalogData;
 }) {
   const search = await searchParams;
-  const demo = search.demo === '1';
-  const [data, session] = await Promise.all([
-    demo ? getDemoCatalog() : getCatalog(),
-    getCurrentUser(),
-  ]);
+  const demo = data.source === 'demo';
+  const session = await getCurrentUser();
   return (
     <div className={`catalog-page ${leagueSpartan.className}`}>
       <Navbar authenticated={session.status === 'authenticated'} demo={demo} />
