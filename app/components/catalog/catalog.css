@@ -441,7 +441,7 @@
   border-radius: 999px;
 }
 
-.catalog-view-switch button[aria-pressed="true"] {
+.catalog-view-switch button[aria-pressed='true'] {
   background: #6a38f3;
   color: white;
 }
@@ -749,5 +749,38 @@
 
   .catalog-category-item {
     transition: none;
+  }
+}
+.catalog-navlinks a[aria-current='page'] {
+  color: #c6e700;
+}
+.catalog-navlinks form button:hover {
+  color: #ef4444;
+}
+.catalog-navlinks .catalog-signup-link {
+  white-space: nowrap;
+}
+@media (max-width: 440px) {
+  .catalog-navbar {
+    padding-inline: 12px;
+    gap: 8px;
+  }
+  .catalog-logo {
+    width: 100px;
+  }
+  .catalog-navlinks {
+    gap: 8px;
+  }
+  .catalog-navlinks .catalog-signup-link {
+    padding-inline: 8px;
+    font-size: 10px;
+  }
+}
+@media (max-width: 350px) {
+  .catalog-logo {
+    width: 86px;
+  }
+  .catalog-navlinks {
+    gap: 6px;
   }
 }
