@@ -1,12 +1,15 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import Icon from './Icon';
+import NavIcon from './NavIcon';
+import './catalog.css';
 export default function Navbar({
   authenticated,
   demo,
+  active,
 }: {
   authenticated: boolean;
   demo: boolean;
+  active?: 'perfil';
 }) {
   return (
     <header className="catalog-navbar">
@@ -28,22 +31,26 @@ export default function Navbar({
           href={demo ? '/?demo=1#categorias' : '/#categorias'}
           aria-label="Explorar categorias"
         >
-          <Icon name="bag" />
+          <NavIcon name="bag" />
         </Link>
         <Link
           href={demo ? '/?demo=1&view=lojas#produtos' : '/?view=lojas#produtos'}
           aria-label="Explorar lojas"
         >
-          <Icon name="store" />
+          <NavIcon name="store" />
         </Link>
         {authenticated ? (
           <>
-            <Link href="/conta" aria-label="Minha conta">
-              <Icon name="user" />
+            <Link
+              href="/perfil"
+              aria-label="Meu perfil"
+              aria-current={active === 'perfil' ? 'page' : undefined}
+            >
+              <NavIcon name="user" />
             </Link>
             <form action="/api/auth/logout" method="post">
               <button type="submit" aria-label="Sair">
-                <Icon name="logout" />
+                <NavIcon name="logout" />
               </button>
             </form>
           </>

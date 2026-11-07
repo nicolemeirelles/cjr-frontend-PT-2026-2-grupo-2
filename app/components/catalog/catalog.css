@@ -9,9 +9,11 @@
   box-sizing: border-box;
 }
 
-.catalog-page a {
-  color: inherit;
-  text-decoration: none;
+@layer base {
+  .catalog-page a {
+    color: inherit;
+    text-decoration: none;
+  }
 }
 
 .catalog-page button,
@@ -747,5 +749,38 @@
 
   .catalog-category-item {
     transition: none;
+  }
+}
+.catalog-navlinks a[aria-current='page'] {
+  color: #c6e700;
+}
+.catalog-navlinks form button:hover {
+  color: #ef4444;
+}
+.catalog-navlinks .catalog-signup-link {
+  white-space: nowrap;
+}
+@media (max-width: 440px) {
+  .catalog-navbar {
+    padding-inline: 12px;
+    gap: 8px;
+  }
+  .catalog-logo {
+    width: 100px;
+  }
+  .catalog-navlinks {
+    gap: 8px;
+  }
+  .catalog-navlinks .catalog-signup-link {
+    padding-inline: 8px;
+    font-size: 10px;
+  }
+}
+@media (max-width: 350px) {
+  .catalog-logo {
+    width: 86px;
+  }
+  .catalog-navlinks {
+    gap: 6px;
   }
 }
