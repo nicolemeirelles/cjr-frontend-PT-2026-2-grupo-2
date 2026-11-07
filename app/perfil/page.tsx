@@ -1,30 +1,31 @@
-import { Suspense } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { League_Spartan } from 'next/font/google';
-import ProductCard from '@/app/components/catalog/ProductCard';
-import Navbar from '@/app/components/catalog/Navbar';
-import { getCurrentUser } from '@/lib/auth';
-import type { Product } from '@/lib/catalog/types';
-import './perfil.css';
+import { Suspense } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { League_Spartan } from "next/font/google";
+import ProductCard from "@/app/components/catalog/ProductCard";
+import Navbar from "@/app/components/catalog/Navbar";
+import { getCurrentUser } from "@/lib/auth";
+import type { Product } from "@/lib/catalog/types";
+import "./perfil.css";
+import { getUserProducts } from "@/lib/catalog/user-products";
 
-const leagueSpartan = League_Spartan({ subsets: ['latin'], display: 'swap' });
-const produtos: Product[] = [
-  { name: 'Bronzer', price: 254.99, image: 'bronzer', stock: 1 },
-  { name: 'Blush', price: 199.99, image: 'blush', stock: 0 },
-  { name: 'Perfume Rare', price: 599.9, image: 'perfume', stock: 1 },
-  { name: 'Iluminador', price: 249.9, image: 'iluminador', stock: 1 },
-  { name: 'Mini Blush', price: 99.99, image: 'mini-blush', stock: 0 },
+const leagueSpartan = League_Spartan({ subsets: ["latin"], display: "swap" });
+const produtosDemo: Product[] = [
+  { name: "Bronzer", price: 254.99, image: "bronzer", stock: 1 },
+  { name: "Blush", price: 199.99, image: "blush", stock: 0 },
+  { name: "Perfume Rare", price: 599.9, image: "perfume", stock: 1 },
+  { name: "Iluminador", price: 249.9, image: "iluminador", stock: 1 },
+  { name: "Mini Blush", price: 99.99, image: "mini-blush", stock: 0 },
 ].map((produto, index) => ({
   id: index + 1,
   name: produto.name,
   price: produto.price,
   image: `/perfil/${produto.image}.webp`,
   stock: produto.stock,
-  storeName: 'Rare Beauty',
+  storeName: "Rare Beauty",
   categoryId: 1,
-  storeLogo: '/perfil/marca.webp',
-  createdAt: '2026-01-01T00:00:00.000Z',
+  storeLogo: "/perfil/marca.webp",
+  createdAt: "2026-01-01T00:00:00.000Z",
   rating: null,
 }));
 
@@ -37,8 +38,13 @@ async function ProfileContent({
 }) {
   const search = await searchParams;
   const session = await getCurrentUser();
-  const authenticated = session.status === 'authenticated';
-  const demo = search.demo === '1' || !authenticated;
+  const authenticated = session.status === "authenticated";
+  const demo = search.demo === "1" || !authenticated;
+  const photoUrl = authenticated ? session.user.profile_picture_url : null;
+  const produtos =
+    demo || !authenticated
+      ? produtosDemo
+      : await getUserProducts(session.user.id);
   return (
     <div className={`catalog-page profile-page ${leagueSpartan.className}`}>
       <Navbar authenticated={authenticated} demo={demo} active="perfil" />
@@ -76,6 +82,16 @@ async function ProfileContent({
                 unoptimized
                 priority
               />
+            ) : photoUrl ? (
+              <Image
+                className="profile-avatar"
+                src={photoUrl}
+                alt="Foto de perfil"
+                width={230}
+                height={230}
+                unoptimized
+                priority
+              />
             ) : (
               <div
                 className="profile-avatar"
@@ -95,22 +111,27 @@ async function ProfileContent({
             )}
             <h1 id="profile-name">
               {demo
-                ? 'Selena Gomez'
+                ? "Selena Gomez"
                 : authenticated
                   ? session.user.name
-                  : 'Nome do Usuário'}
+                  : "Nome do Usuário"}
             </h1>
             <p className="profile-username">
-              @ {demo ? 'selenagomez' : 'Nome de Perfil'}
+              @{" "}
+              {demo
+                ? "selenagomez"
+                : authenticated
+                  ? session.user.username
+                  : "Nome de Perfil"}
             </p>
             <p className="profile-email">
               <Image src="/email.svg" alt="" width={21} height={17} />
               <span>
                 {demo
-                  ? 'selenamariegomez@rare.com'
+                  ? "selenamariegomez@rare.com"
                   : authenticated
                     ? session.user.email
-                    : 'Email do Usuário'}
+                    : "Email do Usuário"}
               </span>
             </p>
           </div>
@@ -132,7 +153,7 @@ async function ProfileContent({
             <h2 id="profile-products-title">Produtos</h2>
             <Link href="/#produtos">ver mais</Link>
           </div>
-          {session.status === 'unavailable' && (
+          {session.status === "unavailable" && (
             <p role="status" className="profile-demo-note">
               Não foi possível verificar sua sessão. Tente novamente em
               instantes.
@@ -148,11 +169,14 @@ async function ProfileContent({
               <ProductCard key={produto.id} product={produto} />
             ))}
           </div>
-          <p className="profile-demo-note">
-            {demo
-              ? 'Perfil e produtos de demonstração do protótipo.'
-              : 'Produtos de demonstração do layout.'}
-          </p>
+          {demo && (
+            <p className="profile-demo-note">
+              Perfil e produtos de demonstração do protótipo.
+            </p>
+          )}
+          {!demo && produtos.length === 0 && (
+            <p className="profile-demo-note">Nenhum produto cadastrado.</p>
+          )}
         </section>
       </main>
     </div>
