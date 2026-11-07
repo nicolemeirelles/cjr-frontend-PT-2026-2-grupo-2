@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import Icon from './Icon';
+import NavIcon from './NavIcon';
 import './catalog.css';
 export default function Navbar({
   authenticated,
@@ -31,13 +31,13 @@ export default function Navbar({
           href={demo ? '/?demo=1#categorias' : '/#categorias'}
           aria-label="Explorar categorias"
         >
-          <Icon name="bag" />
+          <NavIcon name="bag" />
         </Link>
         <Link
           href={demo ? '/?demo=1&view=lojas#produtos' : '/?view=lojas#produtos'}
           aria-label="Explorar lojas"
         >
-          <Icon name="store" />
+          <NavIcon name="store" />
         </Link>
         {authenticated ? (
           <>
@@ -46,11 +46,11 @@ export default function Navbar({
               aria-label="Meu perfil"
               aria-current={active === 'perfil' ? 'page' : undefined}
             >
-              <Icon name="user" />
+              <NavIcon name="user" />
             </Link>
             <form action="/api/auth/logout" method="post">
               <button type="submit" aria-label="Sair">
-                <Icon name="logout" />
+                <NavIcon name="logout" />
               </button>
             </form>
           </>
