@@ -41,9 +41,9 @@ async function ProfileContent({
   const authenticated = session.status === "authenticated";
   const demo = search.demo === "1" || !authenticated;
   const photoUrl = authenticated ? session.user.profile_picture_url : null;
-  const produtos =
+  const resultado =
     demo || !authenticated
-      ? produtosDemo
+      ? { status: "success" as const, products: produtosDemo }
       : await getUserProducts(session.user.id);
   return (
     <div className={`catalog-page profile-page ${leagueSpartan.className}`}>
@@ -159,23 +159,29 @@ async function ProfileContent({
               instantes.
             </p>
           )}
-          <div
-            className="profile-product-row"
-            role="region"
-            aria-label="Produtos de demonstração"
-            tabIndex={0}
-          >
-            {produtos.map((produto) => (
-              <ProductCard key={produto.id} product={produto} />
-            ))}
-          </div>
+          {resultado.status === "unavailable" ? (
+            <p role="status" className="profile-demo-note">
+              Não foi possível carregar seus produtos. Tente novamente em
+              instantes.
+            </p>
+          ) : resultado.products.length === 0 ? (
+            <p className="profile-demo-note">Nenhum produto cadastrado.</p>
+          ) : (
+            <div
+              className="profile-product-row"
+              role="region"
+              aria-label={demo ? "Produtos de demonstração" : "Seus produtos"}
+              tabIndex={0}
+            >
+              {resultado.products.map((produto) => (
+                <ProductCard key={produto.id} product={produto} />
+              ))}
+            </div>
+          )}
           {demo && (
             <p className="profile-demo-note">
               Perfil e produtos de demonstração do protótipo.
             </p>
-          )}
-          {!demo && produtos.length === 0 && (
-            <p className="profile-demo-note">Nenhum produto cadastrado.</p>
           )}
         </section>
       </main>

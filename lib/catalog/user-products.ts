@@ -12,15 +12,20 @@ type ApiProduct = {
   images: { image_url: string }[];
 };
 
-export async function getUserProducts(userId: number): Promise<Product[]> {
+export async function getUserProducts(
+  userId: number,
+): Promise<
+  | { status: "success"; products: Product[] }
+  | { status: "unavailable" }
+> {
   try {
     const response = await fetch(backendUrl(`/produtos?userId=${userId}`), {
       cache: "no-store",
       signal: AbortSignal.timeout(10000),
     });
-    if (!response.ok) return [];
+    if (!response.ok) return { status: "unavailable" };
     const data: ApiProduct[] = await response.json();
-    return data.map((p) => ({
+    const products = data.map((p) => ({
       id: p.id,
       name: p.name,
       price: Number(p.price),
@@ -32,7 +37,8 @@ export async function getUserProducts(userId: number): Promise<Product[]> {
       createdAt: p.createdAt,
       rating: null,
     }));
+    return { status: "success", products };
   } catch {
-    return [];
+    return { status: "unavailable" };
   }
 }
