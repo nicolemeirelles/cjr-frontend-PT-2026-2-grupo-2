@@ -26,7 +26,7 @@ const entries: [string, number, number, number, string, string, string][] = [
   ['Smart Tv Philips', 1229, 9, 53, 'eletronicos-5', 'Rêpiit', 'eletronicos-1'],
   ['Xbox Series X', 3599.99, 3, 55, 'eletronicos-6', 'Hobby', 'eletronicos-7'],
 ];
-export const demoProducts: Product[] = entries.map((entry, index) => ({
+const catalogProducts: Product[] = entries.map((entry, index) => ({
   id: index + 1,
   name: entry[0],
   price: entry[1],
@@ -38,6 +38,26 @@ export const demoProducts: Product[] = entries.map((entry, index) => ({
   createdAt: new Date(Date.UTC(2026, 9, 1 + index)).toISOString(),
   rating: null,
 }));
+
+export const demoBeautyProducts: Product[] = [
+  { name: 'Bronzer', price: 254.99, image: 'bronzer', stock: 1 },
+  { name: 'Blush', price: 199.99, image: 'blush', stock: 0 },
+  { name: 'Perfume Rare', price: 599.9, image: 'perfume', stock: 1 },
+  { name: 'Iluminador', price: 249.9, image: 'iluminador', stock: 1 },
+  { name: 'Mini Blush', price: 99.99, image: 'mini-blush', stock: 0 },
+].map((product, index) => ({
+  ...product,
+  id: catalogProducts.length + index + 1,
+  categoryId: 3,
+  image: `/perfil/${product.image}.webp`,
+  storeName: 'Rare Beauty',
+  storeLogo: '/perfil/marca.webp',
+  createdAt: '2026-01-01T00:00:00.000Z',
+  rating: null,
+}));
+
+export const demoProducts = [...catalogProducts, ...demoBeautyProducts];
+
 export function getDemoCatalog(): CatalogData {
   return {
     categories: demoCategories,

@@ -5,30 +5,11 @@ import { League_Spartan } from "next/font/google";
 import ProductCard from "@/app/components/catalog/ProductCard";
 import Navbar from "@/app/components/catalog/Navbar";
 import { getCurrentUser } from "@/lib/auth";
-import type { Product } from "@/lib/catalog/types";
+import { demoBeautyProducts } from "@/lib/catalog/demo";
 import "./perfil.css";
 import { getUserProducts } from "@/lib/catalog/user-products";
 
 const leagueSpartan = League_Spartan({ subsets: ["latin"], display: "swap" });
-const produtosDemo: Product[] = [
-  { name: "Bronzer", price: 254.99, image: "bronzer", stock: 1 },
-  { name: "Blush", price: 199.99, image: "blush", stock: 0 },
-  { name: "Perfume Rare", price: 599.9, image: "perfume", stock: 1 },
-  { name: "Iluminador", price: 249.9, image: "iluminador", stock: 1 },
-  { name: "Mini Blush", price: 99.99, image: "mini-blush", stock: 0 },
-].map((produto, index) => ({
-  id: index + 1,
-  name: produto.name,
-  price: produto.price,
-  image: `/perfil/${produto.image}.webp`,
-  stock: produto.stock,
-  storeName: "Rare Beauty",
-  categoryId: 1,
-  storeLogo: "/perfil/marca.webp",
-  createdAt: "2026-01-01T00:00:00.000Z",
-  rating: null,
-}));
-
 type ProfileSearch = { demo?: string };
 
 async function ProfileContent({
@@ -43,7 +24,7 @@ async function ProfileContent({
   const photoUrl = authenticated ? session.user.profile_picture_url : null;
   const resultado =
     demo || !authenticated
-      ? { status: "success" as const, products: produtosDemo }
+      ? { status: "success" as const, products: demoBeautyProducts }
       : await getUserProducts(session.user.id);
   return (
     <div className={`catalog-page profile-page ${leagueSpartan.className}`}>
