@@ -1,8 +1,8 @@
 'use client';
 import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import { clientApi, getErrorMessage } from '@/lib/axios-client';
 import { uploadImage } from '@/lib/uploadimage';
 import './ModalProduct.css';
-import AddProductButton from '../components/catalog/AddProductButton';
 
 export interface Category {
   id: number;
@@ -13,9 +13,12 @@ interface CreateModalProductProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess?: () => void;
+  
   storeId: number;
+
   categories: Category[];
 }
+
 
 interface Photo {
   file: File;
@@ -61,8 +64,10 @@ export default function CreateProductModal({
     };
   }, [isOpen, onClose]);
 
+
   function handlePhotoChange(index: number, e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
+    
     e.target.value = '';
     if (!file) return;
 
@@ -103,7 +108,7 @@ export default function CreateProductModal({
   }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+    e.preventDefault(); 
     if (loading) return;
     setError('');
 
@@ -111,43 +116,36 @@ export default function CreateProductModal({
       setError('Adicione pelo menos a foto principal do produto.');
       return;
     }
+   
     const files = photos.filter((photo): photo is Photo => photo !== null).map((photo) => photo.file);
 
     setLoading(true);
     try {
+      
       const imageUrls = await Promise.all(files.map((file) => uploadImage(file)));
 
-      const response = await fetch('/api/produtos', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: name.trim(),
-          description: description.trim() || undefined, 
-          price: Number(price), 
-          stock,
-          category_id: Number(categoryId),
-          store_id: storeId,
-          image_urls: imageUrls,
-        }),
-      }).catch(() => {
-        throw new Error('Sem conexão com o servidor. Tente novamente.');
+      await clientApi.post('/api/produtos', {
+        name: name.trim(),
+        description: description.trim() || undefined, 
+        price: Number(price), 
+        stock,
+        category_id: Number(categoryId),
+        store_id: storeId,
+        image_urls: imageUrls,
       });
-
-      if (!response.ok) throw new Error(await getErrorMessage(response));
 
       resetForm();
       onSuccess?.(); 
       onClose();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Não foi possível adicionar o produto. Tente novamente.');
+    } catch (error) {
+      setError(getErrorMessage(error, 'Não foi possível adicionar o produto. Tente novamente.'));
     } finally {
       setLoading(false);
     }
   }
 
-  
-  if (!isOpen) return null; 
 
+  if (!isOpen) return null; 
   return (
     <div
       className="product-modal-overlay"
@@ -173,7 +171,7 @@ export default function CreateProductModal({
         </h2>
 
         <form className="product-modal__form" onSubmit={handleSubmit}>
-          {/* Fotos: o primeiro slot é o grande, os outros 3 são os pequenos */}
+          {}
           <div className="product-modal__photos">
             {photos.map((photo, index) => (
               <PhotoSlot
@@ -237,7 +235,7 @@ export default function CreateProductModal({
             required
           />
 
-          {/* Contador de estoque: - 13 + */}
+          {}
           <div className="product-modal__quantity" role="group" aria-label="Quantidade em estoque">
             <button
               type="button"
@@ -277,15 +275,6 @@ export default function CreateProductModal({
 }
 
 
-async function getErrorMessage(response: Response): Promise<string> {
-  if (response.status === 401) return 'Sua sessão expirou. Entre novamente para adicionar produtos.';
-
-  const data = await response.json().catch(() => null);
-  const message = data?.message;
-  if (Array.isArray(message)) return message.join('. ');
-  if (typeof message === 'string') return message;
-  return 'Não foi possível adicionar o produto. Tente novamente.';
-}
 
 interface PhotoSlotProps {
   photo: Photo | null;
@@ -295,12 +284,14 @@ interface PhotoSlotProps {
   onRemove: () => void;
 }
 
+
 function PhotoSlot({ photo, large, label, onSelect, onRemove }: PhotoSlotProps) {
   return (
     <div className={`photo-slot${large ? ' photo-slot--large' : ''}`}>
-      {/* Clicar no <label> abre o seletor de arquivos do <input> que está dentro dele */}
+      {}
       <label className="photo-slot__label">
         {photo ? (
+          
           <img src={photo.preview} alt="Prévia da foto do produto" className="photo-slot__img" />
         ) : (
           <>
@@ -317,7 +308,7 @@ function PhotoSlot({ photo, large, label, onSelect, onRemove }: PhotoSlotProps) 
         />
       </label>
 
-      {/* Fica fora do <label> para não abrir o seletor de arquivos ao clicar */}
+      {}
       {photo && (
         <button type="button" className="photo-slot__remove" aria-label="Remover foto" onClick={onRemove}>
           ×
@@ -326,6 +317,7 @@ function PhotoSlot({ photo, large, label, onSelect, onRemove }: PhotoSlotProps) 
     </div>
   );
 }
+
 
 function CameraPlusIcon() {
   return (

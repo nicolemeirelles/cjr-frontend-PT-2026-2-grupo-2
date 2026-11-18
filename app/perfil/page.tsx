@@ -10,6 +10,7 @@ import "./perfil.css";
 import { getUserProducts } from "@/lib/catalog/user-products";
 import AddProductButton from "@/app/components/catalog/AddProductButton";
 import { getCatalog } from '@/lib/catalog/api';
+import { getUserStore } from "@/lib/catalog/user-store";
 
 const leagueSpartan = League_Spartan({ subsets: ["latin"], display: "swap" });
 type ProfileSearch = { demo?: string };
@@ -28,9 +29,12 @@ async function ProfileContent({
     demo || !authenticated
       ? { status: "success" as const, products: demoBeautyProducts }
       : await getUserProducts(session.user.id);
-  const canAddProduct = authenticated && !demo; 
+  const canAddProduct = authenticated && !demo;
   const catalog = canAddProduct ? await getCatalog() : null;
-  const userStore = canAddProduct ? { id: 1 } : undefined;
+  const userStore = canAddProduct ? await getUserStore(session.user.id) : null;
+  const apiCategories = catalog?.source === "api" ? catalog.categories : [];
+  const subcategories = apiCategories.filter((category) => category.parentId !== null);
+  const categoryOptions = subcategories.length > 0 ? subcategories : apiCategories;
   return (
     <div className={`catalog-page profile-page ${leagueSpartan.className}`}>
       <Navbar authenticated={authenticated} demo={demo} active="perfil" />

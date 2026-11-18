@@ -1,5 +1,3 @@
-/* Botão "+" que abre o modal de adicionar produto.
-   No protótipo: círculo roxo de ~38px com o "+" branco. */
 .add-product-btn {
   display: grid;
   place-items: center;
@@ -9,9 +7,8 @@
   padding: 0;
   border: 0;
   border-radius: 50%;
-  /* TODO: troque o fallback pelo roxo exato do Figma (ou pela variável do globals.css) */
   background: var(--purple, #6b3cf0);
-  color: #fff; /* o "+" usa currentColor */
+  color: #fff; 
   cursor: pointer;
 }
 
