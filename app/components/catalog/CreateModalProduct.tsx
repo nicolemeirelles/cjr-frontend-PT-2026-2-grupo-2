@@ -6,7 +6,8 @@ import './ModalProduct.css';
 
 export interface Category {
   id: number;
-  name: string; 
+  name: string;
+  group?: string; 
 }
 
 interface CreateModalProductProps {
@@ -206,11 +207,23 @@ export default function CreateProductModal({
             <option value="" disabled>
               Subcategoria
             </option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
+                       {groupCategories(categories).map(([group, options]) =>
+              group ? (
+                <optgroup key={group} label={group}>
+                  {options.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </optgroup>
+              ) : (
+                options.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))
+              ),
+            )}
           </select>
 
           <textarea
@@ -274,7 +287,14 @@ export default function CreateProductModal({
   );
 }
 
-
+function groupCategories(categories: Category[]): [string, Category[]][] {
+  const groups = new Map<string, Category[]>();
+  for (const category of categories) {
+    const key = category.group ?? '';
+    groups.set(key, [...(groups.get(key) ?? []), category]);
+  }
+  return [...groups.entries()];
+}
 
 interface PhotoSlotProps {
   photo: Photo | null;

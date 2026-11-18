@@ -29,12 +29,22 @@ async function ProfileContent({
     demo || !authenticated
       ? { status: "success" as const, products: demoBeautyProducts }
       : await getUserProducts(session.user.id);
-  const canAddProduct = authenticated && !demo;
+  const canAddProduct = authenticated && !demo; 
   const catalog = canAddProduct ? await getCatalog() : null;
   const userStore = canAddProduct ? await getUserStore(session.user.id) : null;
   const apiCategories = catalog?.source === "api" ? catalog.categories : [];
+  const categoryNames = new Map(apiCategories.map((category) => [category.id, category.name]));
   const subcategories = apiCategories.filter((category) => category.parentId !== null);
-  const categoryOptions = subcategories.length > 0 ? subcategories : apiCategories;
+  const storeCategoryId = userStore?.categoryId ?? null;
+  const storeSubcategories = subcategories.filter((category) => category.parentId === storeCategoryId);
+  const categoryOptions =
+    storeSubcategories.length > 0
+      ? storeSubcategories.map(({ id, name }) => ({ id, name }))
+      : subcategories.map(({ id, name, parentId }) => ({
+          id,
+          name,
+          group: categoryNames.get(parentId ?? -1), 
+        }));
   return (
     <div className={`catalog-page profile-page ${leagueSpartan.className}`}>
       <Navbar authenticated={authenticated} demo={demo} active="perfil" />
@@ -143,10 +153,7 @@ async function ProfileContent({
             <h2 id="profile-products-title">Produtos</h2>
             <div className="profile-products-actions">
               {canAddProduct && (
-                <AddProductButton
-                  storeId={userStore ? Number(userStore.id) : undefined}
-                  categories={catalog?.categories ?? []}
-                />
+              <AddProductButton storeId={userStore?.id} categories={categoryOptions} />
               )}
               <Link href="/#produtos">ver mais</Link>
           </div>
