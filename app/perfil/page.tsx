@@ -8,6 +8,8 @@ import { getCurrentUser } from "@/lib/auth";
 import { demoBeautyProducts } from "@/lib/catalog/demo";
 import "./perfil.css";
 import { getUserProducts } from "@/lib/catalog/user-products";
+import AddProductButton from "@/app/components/catalog/AddProductButton";
+import { getCatalog } from '@/lib/catalog/api';
 
 const leagueSpartan = League_Spartan({ subsets: ["latin"], display: "swap" });
 type ProfileSearch = { demo?: string };
@@ -26,6 +28,9 @@ async function ProfileContent({
     demo || !authenticated
       ? { status: "success" as const, products: demoBeautyProducts }
       : await getUserProducts(session.user.id);
+  const canAddProduct = authenticated && !demo; 
+  const catalog = canAddProduct ? await getCatalog() : null;
+  const userStore = canAddProduct ? { id: 1 } : undefined;
   return (
     <div className={`catalog-page profile-page ${leagueSpartan.className}`}>
       <Navbar authenticated={authenticated} demo={demo} active="perfil" />
@@ -130,9 +135,17 @@ async function ProfileContent({
           className="profile-products"
           aria-labelledby="profile-products-title"
         >
-          <div className="profile-products-heading">
+       <div className="profile-products-heading">
             <h2 id="profile-products-title">Produtos</h2>
-            <Link href="/#produtos">ver mais</Link>
+            <div className="profile-products-actions">
+              {canAddProduct && (
+                <AddProductButton
+                  storeId={userStore ? Number(userStore.id) : undefined}
+                  categories={catalog?.categories ?? []}
+                />
+              )}
+              <Link href="/#produtos">ver mais</Link>
+          </div>
           </div>
           {session.status === "unavailable" && (
             <p role="status" className="profile-demo-note">
