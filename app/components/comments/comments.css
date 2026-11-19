@@ -1,0 +1,25 @@
+.comment-modal { position: fixed; inset: 0; margin: auto; width: min(920px, calc(100% - 32px)); max-height: calc(100dvh - 32px); padding: 64px 8% 30px; border: 0; border-radius: 28px; background: #eee; color: #171918; overflow-y: auto; font: inherit; }
+.comment-modal::backdrop { background: rgb(0 0 0 / 48%); }
+.comment-modal * { box-sizing: border-box; }
+.comment-close { position: absolute; top: 12px; right: 20px; border: 0; background: transparent; font-size: 36px; line-height: 1; cursor: pointer; }
+.comment-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.comment-modal textarea { display: block; width: 100%; height: min(390px, 46dvh); min-height: 140px; resize: vertical; padding: 24px 28px; border: 1px solid transparent; border-radius: 24px; background: #fff; color: #171918; font: inherit; font-size: 24px; line-height: 1.3; }
+.comment-modal textarea::placeholder { color: #858585; }
+.comment-modal :focus-visible, .review-comments :focus-visible { outline: 3px solid #6230da; outline-offset: 4px; }
+.comment-count { margin-top: 8px; text-align: right; font-size: 14px; color: #525252; }
+.comment-error { min-height: 20px; margin: 8px 0; color: #a42323; font-size: 16px; }
+.comment-save { display: block; width: 68%; min-height: 44px; margin: 16px auto 0; border: 0; border-radius: 999px; background: #7034f4; color: white; font: inherit; font-size: 20px; box-shadow: 0 4px 4px #0003; cursor: pointer; }
+.comment-modal button:disabled { opacity: .6; cursor: default; }
+.review-comments { margin: 24px 0 0 32px; padding-left: 20px; border-left: 2px solid #e2d9f5; font-size: 17px; }
+.review-comments ul { margin: 0; padding: 0; list-style: none; }
+.review-comments li { margin-bottom: 18px; }
+.review-comments li p { margin: 6px 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.review-comments a, .review-comments button { color: #6128d0; }
+.review-comments button { background: transparent; border: 0; font: inherit; text-decoration: underline; cursor: pointer; padding: 6px 0; }
+.review-comments button:disabled { opacity: .5; cursor: default; }
+@media (max-width: 600px) {
+  .comment-modal { padding: 56px 20px 24px; border-radius: 24px; }
+  .comment-modal textarea { padding: 18px; font-size: 20px; }
+  .comment-save { width: 100%; }
+  .review-comments { margin-left: 12px; padding-left: 12px; }
+}
