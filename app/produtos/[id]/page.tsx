@@ -8,13 +8,14 @@ import ProductCard from '@/app/components/catalog/ProductCard';
 import ProductGallery from '@/app/components/catalog/produto/ProductGallery';
 import { getCurrentUser } from '@/lib/auth';
 import { getProductDetail, type ProductReview } from '@/lib/catalog/product-detail';
+import { getCatalog } from '@/lib/catalog/api';
+import { buildCategoryOptions, type CategoryOption } from '@/lib/catalog/category-options';
+import EditProductButton from '@/app/components/catalog/EditProductButton';
 import './produto.css';
 
 const leagueSpartan = League_Spartan({ subsets: ['latin'], display: 'swap' });
 const formatPrice = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
-
 type ProductParams = { id: string };
-
 async function ProductContent({ params }: { params: Promise<ProductParams> }) {
   const { id } = await params;
   const productId = Number(id);
@@ -25,6 +26,13 @@ async function ProductContent({ params }: { params: Promise<ProductParams> }) {
   const result = await getProductDetail(productId, authenticated ? session.user.id : null);
 
   if (result.status === 'not-found') notFound();
+
+  const isOwner = result.status === 'success' && result.product.isOwner;
+  const catalog = isOwner ? await getCatalog() : null;
+  const categoryOptions =
+    result.status === 'success' && catalog?.source === 'api'
+      ? buildCategoryOptions(catalog.categories, result.product.categoryId)
+      : [];
 
   return (
     <div className={`catalog-page product-page ${leagueSpartan.className}`}>
@@ -42,7 +50,7 @@ async function ProductContent({ params }: { params: Promise<ProductParams> }) {
             Não foi possível carregar o produto. Tente novamente em instantes.
           </p>
         ) : (
-          <ProductView product={result.product} />
+          <ProductView product={result.product} categoryOptions={categoryOptions} />
         )}
       </main>
     </div>
@@ -51,9 +59,10 @@ async function ProductContent({ params }: { params: Promise<ProductParams> }) {
 
 type ProductViewProps = {
   product: Extract<Awaited<ReturnType<typeof getProductDetail>>, { status: 'success' }>['product'];
+  categoryOptions: CategoryOption[];
 };
 
-function ProductView({ product }: ProductViewProps) {
+function ProductView({ product, categoryOptions }: ProductViewProps) {
   const available = product.stock > 0;
 
   return (
@@ -70,18 +79,18 @@ function ProductView({ product }: ProductViewProps) {
           <div className="product-title-row">
             <h1 id="product-name">{product.name}</h1>
             {product.isOwner && (
-              <button
-                type="button"
-                className="product-edit"
-                aria-label="Editar produto"
-                title="A edição de produto ainda não está disponível"
-                disabled
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M4 20h4L19 9l-4-4L4 16v4Z" />
-                  <path d="m13.5 6.5 4 4" />
-                </svg>
-              </button>
+              <EditProductButton
+                product={{
+                  id: product.id,
+                  name: product.name,
+                  description: product.description,
+                  price: product.price,
+                  stock: product.stock,
+                  categoryId: product.categoryId,
+                  images: product.imageItems,
+                }}
+                categories={categoryOptions}
+              />
             )}
           </div>
 
@@ -138,7 +147,6 @@ function ProductView({ product }: ProductViewProps) {
     </>
   );
 }
-
 
 function ReviewCard({ review }: { review: ProductReview }) {
   return (

@@ -8,7 +8,7 @@ const MAX_IMAGES = 4;
 
 export type ProductReview = {
   id: number;
-  rating: number;
+  rating: number; 
   comment: string;
   userName: string;
   userPhoto: string | null;
@@ -20,14 +20,16 @@ export type ProductDetail = {
   description: string;
   price: number;
   stock: number;
+  categoryId: number | null;
   categoryName: string | null;
   images: string[]; 
+  imageItems: { id: number; url: string }[]; 
   storeName: string;
   storeLogo: string | null;
   rating: { average: number; count: number } | null;
   isOwner: boolean; 
   sameStore: Product[]; 
-  reviews: ProductReview[];
+  reviews: ProductReview[]; 
 };
 
 export type ProductDetailResult =
@@ -38,19 +40,16 @@ export type ProductDetailResult =
 type Raw = Record<string, unknown>;
 
 const isRecord = (value: unknown): value is Raw => typeof value === 'object' && value !== null;
-
 const toNumber = (value: unknown): number | null => {
-  const number = Number(value);
+  const number = Number(value); 
   return value !== null && value !== '' && Number.isFinite(number) ? number : null;
 };
 
 const toText = (value: unknown): string => (typeof value === 'string' ? value : '');
-
 const toList = (data: unknown): Raw[] => {
   const list = Array.isArray(data) ? data : isRecord(data) && Array.isArray(data.data) ? data.data : [];
   return list.filter(isRecord);
 };
-
 const firstImage = (item: Raw): string | null => {
   const images = toList(item.images);
   const url = images[0]?.image_url;
@@ -79,12 +78,10 @@ export async function getProductDetail(
   ]);
 
   const allList = allProducts.status === 'fulfilled' ? toList(allProducts.value.data) : [];
-
   const listed = allList.find((item) => toNumber(item.id) === id);
   const store = isRecord(listed?.store) ? listed.store : {};
   const storeName = toText(store.name);
   const storeLogo = toText(store.logo_url) || null;
-
   const isOwner =
     ownProducts.status === 'fulfilled' &&
     ownProducts.value !== null &&
@@ -105,7 +102,6 @@ export async function getProductDetail(
       createdAt: toText(item.createdAt),
       rating: null,
     }));
-
   const reviews: ProductReview[] = (ratings.status === 'fulfilled' ? toList(ratings.value.data) : [])
     .filter((item) => toNumber(item.product_id) === id)
     .sort((a, b) => toText(b.createdAt).localeCompare(toText(a.createdAt)))
@@ -125,11 +121,12 @@ export async function getProductDetail(
       ? { average: reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length, count: reviews.length }
       : null;
 
-  const images = toList(raw.images)
+  const imageItems = toList(raw.images)
     .sort((a, b) => (toNumber(a.order) ?? 0) - (toNumber(b.order) ?? 0))
-    .map((image) => image.image_url)
-    .filter((url): url is string => typeof url === 'string' && url !== '')
+    .map((image) => ({ id: toNumber(image.id), url: image.image_url }))
+    .filter((image): image is { id: number; url: string } => image.id !== null && typeof image.url === 'string' && image.url !== '')
     .slice(0, MAX_IMAGES);
+  const images = imageItems.map((image) => image.url);
 
   return {
     status: 'success',
@@ -139,8 +136,10 @@ export async function getProductDetail(
       description: toText(raw.description),
       price: toNumber(raw.price) ?? 0,
       stock: toNumber(raw.stock) ?? 0,
+      categoryId: toNumber(raw.category_id),
       categoryName: isRecord(raw.category) ? toText(raw.category.name) || null : null,
       images,
+      imageItems,
       storeName,
       storeLogo,
       rating,
