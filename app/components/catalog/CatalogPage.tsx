@@ -94,7 +94,7 @@ export default async function CatalogPage({
           </div>
         </section>
         <Catalog
-          key={categoryId ?? 'home'}
+          key={`${categoryId ?? 'home'}:${search.q ?? ''}:${search.view ?? ''}`}
           data={data}
           categoryId={categoryId}
           initialQuery={search.q}
