@@ -12,6 +12,7 @@ export default function ReviewComments({ target, currentUserId }: { target: Comm
   const [error, setError] = useState('');
   const [attempt, setAttempt] = useState(0);
   const [creating, setCreating] = useState(false);
+  const [editing, setEditing] = useState<RatingComment | null>(null);
   const query = targetQuery(target);
 
   useEffect(() => {
@@ -40,6 +41,7 @@ export default function ReviewComments({ target, currentUserId }: { target: Comm
         <ul>{comments.map((comment) => <li key={comment.id}>
           <strong>{comment.user.name}</strong>
           <p>{comment.content}</p>
+          {comment.user_id === currentUserId && <button type="button" onClick={() => setEditing(comment)}>Editar comentário</button>}
         </li>)}</ul>
       )}
       {currentUserId ? <button type="button" className="comment-action" disabled={loading || !!error} onClick={() => setCreating(true)}>Comentar</button>
@@ -47,6 +49,9 @@ export default function ReviewComments({ target, currentUserId }: { target: Comm
       {creating && <CommentModal onClose={() => setCreating(false)} onSaved={(comment) => setComments((items) => [...items, comment])}
         submit={(content) => fetch('/api/comentarios', { method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ content, [target.kind === 'product' ? 'product_rating_id' : 'store_rating_id']: target.id }) })} />}
+      {editing && <CommentModal title="Editar comentário" buttonLabel="Salvar" initialContent={editing.content}
+        onClose={() => setEditing(null)} onSaved={(comment) => setComments((items) => items.map((item) => item.id === comment.id ? comment : item))}
+        submit={(content) => fetch(`/api/comentarios/${editing.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ content }) })} />}
     </section>
   );
 }
