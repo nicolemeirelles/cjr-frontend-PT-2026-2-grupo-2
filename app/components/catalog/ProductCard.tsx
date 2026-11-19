@@ -3,6 +3,7 @@ import { useState } from "react";
 import Image from "next/image";
 import type { Product } from "@/lib/catalog/types";
 import Icon from "./Icon";
+import Link from "next/link";
 const currency = new Intl.NumberFormat("pt-BR", {
   style: "currency",
   currency: "BRL",
@@ -17,6 +18,7 @@ export default function ProductCard({
   const [failed, setFailed] = useState(false);
   const [logoFailed, setLogoFailed] = useState(false);
   return (
+    <Link href={`/produtos/${product.id}`} className="product-card-link">
     <article className="catalog-product">
       <div className="catalog-product-picture">
         {product.image && !failed ? (
@@ -59,5 +61,6 @@ export default function ProductCard({
         <span className="catalog-sr-only">Vendido por {product.storeName}</span>
       )}
     </article>
+    </Link>
   );
 }
