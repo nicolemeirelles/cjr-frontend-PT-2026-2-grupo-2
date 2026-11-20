@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import { League_Spartan } from 'next/font/google';
 import Navbar from '@/app/components/catalog/Navbar';
 import ProductCard from '@/app/components/catalog/ProductCard';
+import ReviewComments from '@/app/components/comments/ReviewComments';
 import ProductGallery from '@/app/components/catalog/produto/ProductGallery';
 import { getCurrentUser } from '@/lib/auth';
 import { getProductDetail, type ProductReview } from '@/lib/catalog/product-detail';
@@ -50,7 +51,7 @@ async function ProductContent({ params }: { params: Promise<ProductParams> }) {
             Não foi possível carregar o produto. Tente novamente em instantes.
           </p>
         ) : (
-          <ProductView product={result.product} categoryOptions={categoryOptions} />
+          <ProductView product={result.product} categoryOptions={categoryOptions} currentUserId={authenticated ? session.user.id : null} />
         )}
       </main>
     </div>
@@ -58,11 +59,12 @@ async function ProductContent({ params }: { params: Promise<ProductParams> }) {
 }
 
 type ProductViewProps = {
+  currentUserId: number | null;
   product: Extract<Awaited<ReturnType<typeof getProductDetail>>, { status: 'success' }>['product'];
   categoryOptions: CategoryOption[];
 };
 
-function ProductView({ product, categoryOptions }: ProductViewProps) {
+function ProductView({ product, categoryOptions, currentUserId }: ProductViewProps) {
   const available = product.stock > 0;
 
   return (
@@ -128,7 +130,7 @@ function ProductView({ product, categoryOptions }: ProductViewProps) {
         ) : (
           <ul className="product-reviews__row" aria-label="Avaliações do produto" tabIndex={0}>
             {product.reviews.map((review) => (
-              <ReviewCard key={review.id} review={review} />
+              <ReviewCard key={review.id} review={review} currentUserId={currentUserId} />
             ))}
           </ul>
         )}
@@ -148,7 +150,7 @@ function ProductView({ product, categoryOptions }: ProductViewProps) {
   );
 }
 
-function ReviewCard({ review }: { review: ProductReview }) {
+function ReviewCard({ review, currentUserId }: { review: ProductReview; currentUserId: number | null }) {
   return (
     <li className="review-card">
       {review.userPhoto ? (
@@ -172,6 +174,7 @@ function ReviewCard({ review }: { review: ProductReview }) {
           <Stars rating={review.rating} />
         </div>
         {review.comment && <p className="review-card__comment">{review.comment}</p>}
+        <ReviewComments target={{ kind: 'product', id: review.id }} currentUserId={currentUserId} />
       </div>
     </li>
   );
