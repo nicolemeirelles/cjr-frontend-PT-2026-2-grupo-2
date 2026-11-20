@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { CatalogData, Category, Product } from '@/lib/catalog/types';
 import Icon from './Icon';
 import ProductCard from './ProductCard';
+import SearchBar from './SearchBar';
 type Props = {
   data: CatalogData;
   categoryId?: number;
@@ -93,25 +94,7 @@ export default function Catalog({
           </Link>
         </div>
       )}
-      <form
-        className="catalog-search"
-        role="search"
-        onSubmit={(event) => event.preventDefault()}
-      >
-        <label htmlFor="catalog-search" className="catalog-sr-only">
-          Buscar produtos e lojas
-        </label>
-        <input
-          id="catalog-search"
-          type="search"
-          placeholder="Procurar por…"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-        />
-        <button type="submit" aria-label="Buscar">
-          <Icon name="search" size={21} />
-        </button>
-      </form>
+      <SearchBar query={query} onChange={setQuery} />
       {categoryId === undefined ? (
         <section
           id="categorias"
