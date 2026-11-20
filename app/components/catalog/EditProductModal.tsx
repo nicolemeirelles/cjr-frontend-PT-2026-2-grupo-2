@@ -316,7 +316,7 @@ export default function EditProductModal({
     </div>
   );
 }
-function groupCategories(categories: CategoryOption[]): [string, CategoryOption[]][] {
+  function groupCategories(categories: CategoryOption[]): [string, CategoryOption[]][] {
   const groups = new Map<string, CategoryOption[]>();
   for (const category of categories) {
     const key = category.group ?? '';
@@ -325,7 +325,7 @@ function groupCategories(categories: CategoryOption[]): [string, CategoryOption[
   return [...groups.entries()];
 }
 
-interface PhotoSlotProps {
+  interface PhotoSlotProps {
   preview: string | null;
   large: boolean;
   label: string;
@@ -333,12 +333,11 @@ interface PhotoSlotProps {
   onRemove: () => void;
 }
 
-function PhotoSlot({ preview, large, label, onSelect, onRemove }: PhotoSlotProps) {
+  function PhotoSlot({ preview, large, label, onSelect, onRemove }: PhotoSlotProps) {
   return (
     <div className={`photo-slot${large ? ' photo-slot--large' : ''}`}>
       <label className="photo-slot__label">
         {preview ? (
-          // eslint-disable-next-line @next/next/no-img-element
           <img src={preview} alt="Foto do produto" className="photo-slot__img" />
         ) : (
           <>
@@ -358,7 +357,7 @@ function PhotoSlot({ preview, large, label, onSelect, onRemove }: PhotoSlotProps
   );
 }
 
-function CameraPlusIcon() {
+  function CameraPlusIcon() {
   return (
     <svg width="40" height="40" viewBox="0 0 48 48" fill="none" aria-hidden="true">
       <path
