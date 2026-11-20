@@ -12,6 +12,7 @@ import AddProductButton from "@/app/components/catalog/AddProductButton";
 import { getCatalog } from '@/lib/catalog/api';
 import { getUserStore } from "@/lib/catalog/user-store";
 import EditProfileButton from "@/app/components/perfil/EditProfileButton";
+import AddStoreButton from "@/app/components/loja/AddStoreButton";
 
 const leagueSpartan = League_Spartan({ subsets: ["latin"], display: "swap" });
 type ProfileSearch = { demo?: string };
@@ -36,6 +37,9 @@ async function ProfileContent({
   const apiCategories = catalog?.source === "api" ? catalog.categories : [];
   const categoryNames = new Map(apiCategories.map((category) => [category.id, category.name]));
   const subcategories = apiCategories.filter((category) => category.parentId !== null);
+  const storeCategories = apiCategories
+    .filter((category) => category.parentId === null)
+    .map(({ id, name }) => ({ id, name }));
   const storeCategoryId = userStore?.categoryId ?? null;
   const storeSubcategories = subcategories.filter((category) => category.parentId === storeCategoryId);
   const categoryOptions =
@@ -136,7 +140,12 @@ async function ProfileContent({
               </span>
             </p>
           </div>
-        {authenticated && !demo && <EditProfileButton user={session.user} />}
+          {authenticated && !demo && (
+            <div className="profile-buttons">
+              <EditProfileButton user={session.user} />
+              <AddStoreButton categories={storeCategories} />
+            </div>
+          )}
         </section>
         <section
           className="profile-products"

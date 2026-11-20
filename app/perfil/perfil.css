@@ -90,6 +90,21 @@
 .profile-edit:disabled {
   cursor: not-allowed;
 }
+.profile-buttons {
+  margin-top: 32px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.profile-page .profile-buttons .profile-edit {
+  margin-top: 0;
+}
+.profile-page .profile-add-store {
+  background: #fff;
+  color: #6a38f3;
+  box-shadow: inset 0 0 0 2px #6a38f3;
+}
 .profile-products {
   width: min(1211.38px, 90%);
   margin: 56px auto 0;
@@ -241,6 +256,10 @@
     font-size: 20px;
   }
   .profile-page .profile-edit {
+    margin-top: 0;
+    width: 100%;
+  }
+  .profile-buttons {
     margin-top: 0;
     width: 100%;
   }
