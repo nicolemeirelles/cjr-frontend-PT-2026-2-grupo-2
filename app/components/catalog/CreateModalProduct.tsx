@@ -172,7 +172,6 @@ export default function CreateProductModal({
         </h2>
 
         <form className="product-modal__form" onSubmit={handleSubmit}>
-          {}
           <div className="product-modal__photos">
             {photos.map((photo, index) => (
               <PhotoSlot
@@ -248,7 +247,6 @@ export default function CreateProductModal({
             required
           />
 
-          {}
           <div className="product-modal__quantity" role="group" aria-label="Quantidade em estoque">
             <button
               type="button"
@@ -308,7 +306,6 @@ interface PhotoSlotProps {
 function PhotoSlot({ photo, large, label, onSelect, onRemove }: PhotoSlotProps) {
   return (
     <div className={`photo-slot${large ? ' photo-slot--large' : ''}`}>
-      {}
       <label className="photo-slot__label">
         {photo ? (
           
@@ -328,7 +325,6 @@ function PhotoSlot({ photo, large, label, onSelect, onRemove }: PhotoSlotProps) 
         />
       </label>
 
-      {}
       {photo && (
         <button type="button" className="photo-slot__remove" aria-label="Remover foto" onClick={onRemove}>
           ×
