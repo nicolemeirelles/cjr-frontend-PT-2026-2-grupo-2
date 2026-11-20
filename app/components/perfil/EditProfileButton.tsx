@@ -12,7 +12,6 @@ export default function EditProfileButton({ user }: { user: ProfileUser }) {
   const close = () => setOpen('none');
 
   return (
-    <>
       <button type="button" className="profile-edit" onClick={() => setOpen('profile')}>
         Editar Perfil
       </button>
