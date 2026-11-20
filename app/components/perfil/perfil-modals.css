@@ -1,0 +1,146 @@
+.profile-modal {
+  max-width: 470px;
+  padding-top: 40px;
+}
+
+.profile-modal__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.profile-modal__back {
+  position: absolute;
+  top: 26px;
+  left: 28px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #111;
+  cursor: pointer;
+}
+
+.profile-modal__avatar {
+  position: relative;
+  align-self: center;
+  width: 108px;
+  height: 108px;
+  margin-bottom: 16px;
+  cursor: pointer;
+}
+
+.profile-modal__avatar img,
+.profile-modal__avatar-empty {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-modal__avatar-empty {
+  display: grid;
+  place-items: center;
+  background: #d9d4e8;
+  color: #6b3cf0;
+  font-size: 2.5rem;
+}
+
+.profile-modal__camera {
+  position: absolute;
+  right: 22px;
+  bottom: -8px;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #fff;
+  color: #111;
+}
+
+.profile-modal__avatar:has(:focus-visible) {
+  outline: 2px solid #6b3cf0;
+  outline-offset: 4px;
+  border-radius: 50%;
+}
+
+.profile-modal__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 28px;
+}
+
+.profile-modal__outline {
+  width: 100%;
+  padding: 8px 16px;
+  border: 1px solid #6b3cf0;
+  border-radius: 999px;
+  background: #fff;
+  color: #6b3cf0;
+  font: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.profile-modal__outline--danger {
+  border-color: #c0153a;
+  color: #c0153a;
+}
+
+.profile-modal__outline:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.profile-modal__outline:focus-visible {
+  outline: 2px solid #111;
+  outline-offset: 2px;
+}
+
+.profile-modal__wide {
+  align-self: stretch;
+}
+
+.profile-modal__confirm {
+  padding: 12px 14px;
+  border: 1px solid #f3b4b4;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.profile-modal__confirm p {
+  margin: 0 0 10px;
+  font-size: 0.85rem;
+  color: #8a0d0d;
+}
+
+.profile-modal__confirm div {
+  display: flex;
+  gap: 8px;
+}
+
+.profile-modal__key {
+  display: block;
+  margin: 0 auto 28px;
+}
+
+.profile-modal__save-password {
+  margin-top: 48px;
+}
+
+.profile-modal__done {
+  text-align: center;
+}
+
+.profile-modal__done p {
+  margin: 0 0 24px;
+  font-size: 1rem;
+}

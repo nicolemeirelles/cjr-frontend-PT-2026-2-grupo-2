@@ -11,6 +11,7 @@ import { getUserProducts } from "@/lib/catalog/user-products";
 import AddProductButton from "@/app/components/catalog/AddProductButton";
 import { getCatalog } from '@/lib/catalog/api';
 import { getUserStore } from "@/lib/catalog/user-store";
+import EditProfileButton from "@/app/components/perfil/EditProfileButton";
 
 const leagueSpartan = League_Spartan({ subsets: ["latin"], display: "swap" });
 type ProfileSearch = { demo?: string };
@@ -135,15 +136,7 @@ async function ProfileContent({
               </span>
             </p>
           </div>
-          {authenticated && (
-            <button
-              className="profile-edit"
-              disabled
-              title="A edição de perfil ainda não está disponível"
-            >
-              Editar Perfil
-            </button>
-          )}
+        {authenticated && !demo && <EditProfileButton user={session.user} />}
         </section>
         <section
           className="profile-products"
