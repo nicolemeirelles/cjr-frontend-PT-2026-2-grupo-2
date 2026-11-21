@@ -1,0 +1,109 @@
+.review-modal {
+  border: 0;
+  padding: 0;
+  background: #ececec;
+  width: min(670px, 92vw);
+  margin: auto;
+}
+.review-modal::backdrop {
+  background: rgb(0 0 0 / 0.6);
+}
+.review-modal form {
+  position: relative;
+  padding: 28px 32px 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+.review-modal h2 {
+  align-self: flex-start;
+  font-size: 22px;
+  font-weight: 300;
+}
+.review-modal h2 strong {
+  font-weight: 600;
+}
+.review-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.star-rating {
+  display: flex;
+  gap: 8px;
+}
+.star-rating button {
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 0;
+}
+.review-modal textarea {
+  width: 100%;
+  height: 290px;
+  resize: none;
+  border: 0;
+  border-radius: 12px;
+  padding: 16px 20px;
+  font: inherit;
+  background: #fff;
+}
+.review-submit {
+  width: min(380px, 100%);
+  padding: 8px;
+  border: 0;
+  border-radius: 999px;
+  background: #6d3cf0;
+  color: #fff;
+  cursor: pointer;
+}
+.review-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.review-modal {
+  color: #080808;
+}
+.review-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+.review-delete {
+  width: min(380px, 100%);
+  padding: 8px;
+  border: 0;
+  border-radius: 999px;
+  background: #ff0010;
+  color: #fff;
+  cursor: pointer;
+}
+.review-delete:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.review-error {
+  color: #c4121a;
+  font-size: 14px;
+  margin: 8px 0 0;
+  text-align: center;
+}
+.review-modal .review-error {
+  margin: 0;
+}
+.review-trigger {
+  margin: 8px 0 16px;
+  padding: 8px 28px;
+  border: 0;
+  border-radius: 999px;
+  background: #6d3cf0;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 3px 4px #0003;
+}
