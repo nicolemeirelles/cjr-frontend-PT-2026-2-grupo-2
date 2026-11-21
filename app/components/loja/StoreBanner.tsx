@@ -1,12 +1,16 @@
 import Image from "next/image";
 import type { Store } from "@/lib/store";
+import EditStoreButton from "./EditStoreButton";
+import type { StoreCategory } from "./StoreModal";
 
 export default function StoreBanner({
   store,
   isOwner,
+  categories,
 }: {
   store: Store;
   isOwner: boolean;
+  categories: StoreCategory[];
 }) {
   return (
     <section
@@ -30,21 +34,7 @@ export default function StoreBanner({
       <p className="store-owner">by {store.ownerName}</p>
       {isOwner && (
         <div className="store-actions">
-          <button type="button" aria-label="Editar loja" disabled>
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z" />
-            </svg>
-          </button>
+          <EditStoreButton store={store} categories={categories} />
           <button type="button" aria-label="Adicionar produto" disabled>
             <svg
               width="22"

@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import CreateStoreModal, { type StoreCategory } from "./CreateStoreModal";
+import StoreModal, { type StoreCategory } from "./StoreModal";
 
 export default function AddStoreButton({
   categories,
@@ -22,10 +22,10 @@ export default function AddStoreButton({
       </button>
 
       {open && (
-        <CreateStoreModal
+        <StoreModal
           categories={categories}
           onClose={() => setOpen(false)}
-          onCreated={(storeId) => router.push(`/lojas/${storeId}`)}
+          onSaved={(storeId) => router.push(`/lojas/${storeId}`)}
         />
       )}
     </>

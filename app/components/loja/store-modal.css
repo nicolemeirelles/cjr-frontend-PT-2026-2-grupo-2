@@ -31,6 +31,27 @@
   border-radius: 50%;
   object-fit: cover;
 }
+.store-delete {
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 999px;
+  background: #ff0000;
+  color: #fff;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+}
+.store-delete:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.store-delete:focus-visible {
+  outline: 2px solid #111;
+  outline-offset: 2px;
+}
 .store-upload--banner .store-upload__preview {
   height: 64px;
   border-radius: 8px;
