@@ -6,16 +6,10 @@ import ProductCard from "@/app/components/catalog/ProductCard";
 import StoreBanner from "@/app/components/loja/StoreBanner";
 import StoreReviews from "@/app/components/loja/StoreReviews";
 import { getCurrentUser } from "@/lib/auth";
-import { getStore } from "@/lib/store";
+import { getStore, getStoreCategories, parseStoreId } from "@/lib/store";
 import "./loja.css";
 
 const leagueSpartan = League_Spartan({ subsets: ["latin"], display: "swap" });
-
-function parseStoreId(id: string) {
-  if (!/^[1-9]\d{0,9}$/.test(id)) return null;
-  const storeId = Number(id);
-  return storeId <= 2_147_483_647 ? storeId : null;
-}
 
 async function StoreContent({ params }: { params: Promise<{ id: string }> }) {
   const storeId = parseStoreId((await params).id);
@@ -45,12 +39,13 @@ async function StoreContent({ params }: { params: Promise<{ id: string }> }) {
 
   const { store } = result;
   const isOwner = authenticated && session.user.id === store.ownerId;
+  const categories = isOwner ? await getStoreCategories() : [];
 
   return (
     <div className={pageClass}>
       <Navbar authenticated={authenticated} demo={false} />
       <main>
-        <StoreBanner store={store} isOwner={isOwner} />
+        <StoreBanner store={store} isOwner={isOwner} categories={categories} />
         <StoreReviews
           averageRating={store.averageRating}
           reviews={store.reviews}
