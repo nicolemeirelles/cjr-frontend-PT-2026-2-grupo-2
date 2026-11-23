@@ -3,7 +3,6 @@
 }
 .store-banner {
   position: relative;
-  isolation: isolate;
   height: 420px;
   display: grid;
   place-items: center;
@@ -13,14 +12,11 @@
   overflow: hidden;
 }
 .store-banner-image {
-  z-index: -2;
   object-fit: cover;
 }
-.store-banner--image::after {
-  content: "";
+.store-banner-shade {
   position: absolute;
   inset: 0;
-  z-index: -1;
   background: linear-gradient(
     180deg,
     #000 0%,
@@ -29,6 +25,7 @@
   );
 }
 .store-banner-title {
+  position: relative;
   max-width: 100%;
   text-align: left;
 }
@@ -61,7 +58,7 @@
   flex-direction: column;
   gap: 12px;
 }
-.store-page .store-actions button {
+.store-actions > button {
   width: 44px;
   height: 44px;
   border: 0;
@@ -71,7 +68,7 @@
   display: grid;
   place-items: center;
 }
-.store-page .store-actions button:disabled {
+.store-actions > button:disabled {
   cursor: not-allowed;
 }
 .store-reviews {
@@ -245,7 +242,7 @@
     top: 16px;
     gap: 8px;
   }
-  .store-page .store-actions button {
+  .store-actions > button {
     width: 38px;
     height: 38px;
   }
