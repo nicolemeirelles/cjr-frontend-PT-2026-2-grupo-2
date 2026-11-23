@@ -7,9 +7,14 @@ import './addproductbutton.css';
 interface AddProductButtonProps {
   storeId?: number; 
   categories: Category[];
+  className?: string;
 }
 
-export default function AddProductButton({ storeId, categories }: AddProductButtonProps) {
+export default function AddProductButton({
+  storeId,
+  categories,
+  className = 'add-product-btn',
+}: AddProductButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
 
@@ -17,14 +22,14 @@ export default function AddProductButton({ storeId, categories }: AddProductButt
     <>
       <button
         type="button"
-        className="add-product-btn"
+        className={className}
         aria-label="Adicionar produto"
         title={storeId === undefined ? 'Crie uma loja antes de adicionar produtos' : 'Adicionar produto'}
         disabled={storeId === undefined} 
         onClick={() => setIsOpen(true)}
       >
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" aria-hidden="true">
-          <path d="M12 4v16M4 12h16" />
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+          <path d="M12 5v14M5 12h14" />
         </svg>
       </button>
 
@@ -32,7 +37,7 @@ export default function AddProductButton({ storeId, categories }: AddProductButt
         <CreateProductModal
           isOpen={isOpen}
           onClose={() => setIsOpen(false)}
-          onSuccess={() => router.refresh()}
+          onSuccess={() => router.refresh()} 
           storeId={storeId}
           categories={categories}
         />
