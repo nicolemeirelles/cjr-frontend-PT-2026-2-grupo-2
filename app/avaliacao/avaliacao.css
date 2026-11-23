@@ -1,0 +1,170 @@
+.review-page {
+  background: #f6f3e4;
+}
+.review-hero {
+  position: relative;
+  background: #000;
+  color: #fff;
+  padding: 24px max(5%, calc((100% - 1000px) / 2)) 96px;
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+.review-back {
+  color: #fff;
+  display: inline-flex;
+  padding-top: 8px;
+}
+.review-hero-body {
+  flex: 1;
+  min-width: 0;
+}
+.review-hero-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.review-hero-head h1 {
+  font-size: 22px;
+  font-weight: 400;
+  margin: 0;
+}
+.review-stars {
+  display: inline-flex;
+  gap: 2px;
+  margin-left: auto;
+}
+.review-time {
+  font-size: 11px;
+  color: #aaa;
+  margin-left: 4px;
+}
+.review-text {
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 1.3;
+  margin: 18px 0 0;
+  overflow-wrap: anywhere;
+}
+.review-edit {
+  position: absolute;
+  top: 12px;
+  right: max(5%, calc((100% - 1000px) / 2));
+  background: none;
+  border: 0;
+  color: #fff;
+  padding: 4px;
+}
+.review-edit:disabled {
+  cursor: not-allowed;
+}
+.review-avatar {
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.review-avatar-fallback {
+  display: inline-grid;
+  place-items: center;
+  background: #d1d5db;
+  color: #374151;
+  font-size: 14px;
+}
+.review-thread {
+  width: min(820px, 90%);
+  margin: 0 auto;
+  padding: 0 0 64px;
+}
+.review-comment-list {
+  list-style: none;
+  margin: 24px 0 0;
+  padding: 0 0 0 28px;
+  border-left: 1px solid #333;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.review-comment {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+.review-comment p {
+  margin: 0;
+}
+.review-comment-author {
+  font-size: 16px;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.review-comment-author strong {
+  font-weight: 500;
+}
+.review-owner {
+  color: #6a38f3;
+  font-size: 8px;
+  line-height: 1;
+}
+.review-comment-text {
+  font-size: 13px;
+  font-weight: 300;
+  overflow-wrap: anywhere;
+}
+.review-comment .review-time {
+  color: #777;
+}
+.comment-form {
+  margin-top: 56px;
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 999px;
+  padding: 4px 24px 4px 18px;
+}
+.comment-form input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: none;
+  padding: 10px 0;
+  font-size: 14px;
+  outline: none;
+}
+.comment-form:focus-within {
+  outline: 3px solid #8c65ff;
+}
+.comment-form button {
+  background: none;
+  border: 0;
+  color: #777;
+}
+.comment-form button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.review-demo-note {
+  font-size: 14px;
+  color: #666;
+  margin: 16px 0 0;
+}
+@media (max-width: 600px) {
+  .review-hero {
+    padding-bottom: 56px;
+    gap: 12px;
+  }
+  .review-hero-head h1 {
+    font-size: 18px;
+  }
+  .review-stars {
+    margin-left: 0;
+    width: 100%;
+  }
+  .review-text {
+    font-size: 16px;
+  }
+  .review-comment-list {
+    padding-left: 16px;
+  }
+}

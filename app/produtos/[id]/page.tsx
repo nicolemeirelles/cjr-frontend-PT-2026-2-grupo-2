@@ -1,21 +1,31 @@
-import { Suspense } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { notFound } from 'next/navigation';
-import { League_Spartan } from 'next/font/google';
-import Navbar from '@/app/components/catalog/Navbar';
-import ProductCard from '@/app/components/catalog/ProductCard';
-import ReviewComments from '@/app/components/comments/ReviewComments';
-import ProductGallery from '@/app/components/catalog/produto/ProductGallery';
-import { getCurrentUser } from '@/lib/auth';
-import { getProductDetail, type ProductReview } from '@/lib/catalog/product-detail';
-import { getCatalog } from '@/lib/catalog/api';
-import { buildCategoryOptions, type CategoryOption } from '@/lib/catalog/category-options';
-import EditProductButton from '@/app/components/catalog/EditProductButton';
-import './produto.css';
+import { Suspense } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { notFound } from "next/navigation";
+import { League_Spartan } from "next/font/google";
+import Navbar from "@/app/components/catalog/Navbar";
+import ProductCard from "@/app/components/catalog/ProductCard";
+import ReviewComments from "@/app/components/comments/ReviewComments";
+import ProductGallery from "@/app/components/catalog/produto/ProductGallery";
+import { getCurrentUser } from "@/lib/auth";
+import {
+  getProductDetail,
+  type ProductReview,
+} from "@/lib/catalog/product-detail";
+import { getCatalog } from "@/lib/catalog/api";
+import {
+  buildCategoryOptions,
+  type CategoryOption,
+} from "@/lib/catalog/category-options";
+import EditProductButton from "@/app/components/catalog/EditProductButton";
+import ReviewModal from "@/app/components/review/ReviewModal";
+import "./produto.css";
 
-const leagueSpartan = League_Spartan({ subsets: ['latin'], display: 'swap' });
-const formatPrice = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+const leagueSpartan = League_Spartan({ subsets: ["latin"], display: "swap" });
+const formatPrice = new Intl.NumberFormat("pt-BR", {
+  style: "currency",
+  currency: "BRL",
+});
 type ProductParams = { id: string };
 async function ProductContent({ params }: { params: Promise<ProductParams> }) {
   const { id } = await params;
@@ -23,15 +33,18 @@ async function ProductContent({ params }: { params: Promise<ProductParams> }) {
   if (!Number.isInteger(productId) || productId < 1) notFound();
 
   const session = await getCurrentUser();
-  const authenticated = session.status === 'authenticated';
-  const result = await getProductDetail(productId, authenticated ? session.user.id : null);
+  const authenticated = session.status === "authenticated";
+  const result = await getProductDetail(
+    productId,
+    authenticated ? session.user.id : null,
+  );
 
-  if (result.status === 'not-found') notFound();
+  if (result.status === "not-found") notFound();
 
-  const isOwner = result.status === 'success' && result.product.isOwner;
+  const isOwner = result.status === "success" && result.product.isOwner;
   const catalog = isOwner ? await getCatalog() : null;
   const categoryOptions =
-    result.status === 'success' && catalog?.source === 'api'
+    result.status === "success" && catalog?.source === "api"
       ? buildCategoryOptions(catalog.categories, result.product.categoryId)
       : [];
 
@@ -41,17 +54,31 @@ async function ProductContent({ params }: { params: Promise<ProductParams> }) {
 
       <main className="product-main">
         <Link href="/" aria-label="Voltar para a Home" className="product-back">
-          <svg width="22" height="34" viewBox="0 0 35 54" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <svg
+            width="22"
+            height="34"
+            viewBox="0 0 35 54"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
             <path d="M31 3 5 27l26 24" />
           </svg>
         </Link>
 
-        {result.status === 'unavailable' ? (
+        {result.status === "unavailable" ? (
           <p role="status" className="product-status">
             Não foi possível carregar o produto. Tente novamente em instantes.
           </p>
         ) : (
-          <ProductView product={result.product} categoryOptions={categoryOptions} currentUserId={authenticated ? session.user.id : null} />
+          <ProductView
+            product={result.product}
+            categoryOptions={categoryOptions}
+            currentUserId={authenticated ? session.user.id : null}
+          />
         )}
       </main>
     </div>
@@ -60,11 +87,18 @@ async function ProductContent({ params }: { params: Promise<ProductParams> }) {
 
 type ProductViewProps = {
   currentUserId: number | null;
-  product: Extract<Awaited<ReturnType<typeof getProductDetail>>, { status: 'success' }>['product'];
+  product: Extract<
+    Awaited<ReturnType<typeof getProductDetail>>,
+    { status: "success" }
+  >["product"];
   categoryOptions: CategoryOption[];
 };
 
-function ProductView({ product, categoryOptions, currentUserId }: ProductViewProps) {
+function ProductView({
+  product,
+  categoryOptions,
+  currentUserId,
+}: ProductViewProps) {
   const available = product.stock > 0;
 
   return (
@@ -100,17 +134,27 @@ function ProductView({ product, categoryOptions, currentUserId }: ProductViewPro
             <span className="product-rating">
               {product.rating ? (
                 <>
-                  <span aria-hidden="true" className="product-star">★</span>
-                  {product.rating.average.toFixed(1)} | {product.rating.count}{' '}
-                  {product.rating.count === 1 ? 'review' : 'reviews'}
+                  <span aria-hidden="true" className="product-star">
+                    ★
+                  </span>
+                  {product.rating.average.toFixed(1)} | {product.rating.count}{" "}
+                  {product.rating.count === 1 ? "review" : "reviews"}
                 </>
               ) : (
-                'Sem avaliações'
+                "Sem avaliações"
               )}
             </span>
-            {product.categoryName && <span className="product-category">{product.categoryName}</span>}
-            <span className={available ? 'product-stock' : 'product-stock product-stock--out'}>
-              {available ? `${product.stock} ${product.stock === 1 ? 'disponível' : 'disponíveis'}` : 'Indisponível'}
+            {product.categoryName && (
+              <span className="product-category">{product.categoryName}</span>
+            )}
+            <span
+              className={
+                available ? "product-stock" : "product-stock product-stock--out"
+              }
+            >
+              {available
+                ? `${product.stock} ${product.stock === 1 ? "disponível" : "disponíveis"}`
+                : "Indisponível"}
             </span>
           </p>
 
@@ -118,28 +162,54 @@ function ProductView({ product, categoryOptions, currentUserId }: ProductViewPro
 
           <h2 className="product-description-title">Descrição</h2>
           <p className="product-description">
-            {product.description || 'Este produto ainda não tem descrição.'}
+            {product.description || "Este produto ainda não tem descrição."}
           </p>
         </div>
       </section>
 
       <section className="product-reviews" aria-labelledby="reviews-title">
         <h2 id="reviews-title">Avaliações</h2>
+        {currentUserId !== null &&
+          !product.isOwner &&
+          product.storeId !== null && (
+            <ReviewModal
+              storeId={product.storeId}
+              storeName={product.storeName}
+            />
+          )}
         {product.reviews.length === 0 ? (
-          <p className="product-reviews__empty">Este produto ainda não tem avaliações.</p>
+          <p className="product-reviews__empty">
+            Este produto ainda não tem avaliações.
+          </p>
         ) : (
-          <ul className="product-reviews__row" aria-label="Avaliações do produto" tabIndex={0}>
+          <ul
+            className="product-reviews__row"
+            aria-label="Avaliações do produto"
+            tabIndex={0}
+          >
             {product.reviews.map((review) => (
-              <ReviewCard key={review.id} review={review} currentUserId={currentUserId} />
+              <ReviewCard
+                key={review.id}
+                review={review}
+                currentUserId={currentUserId}
+              />
             ))}
           </ul>
         )}
       </section>
 
       {product.sameStore.length > 0 && (
-        <section className="product-same-store" aria-labelledby="same-store-title">
+        <section
+          className="product-same-store"
+          aria-labelledby="same-store-title"
+        >
           <h2 id="same-store-title">Da mesma loja</h2>
-          <div className="product-same-store__row" role="region" aria-label="Outros produtos da loja" tabIndex={0}>
+          <div
+            className="product-same-store__row"
+            role="region"
+            aria-label="Outros produtos da loja"
+            tabIndex={0}
+          >
             {product.sameStore.map((item) => (
               <ProductCard key={item.id} product={item} />
             ))}
@@ -150,7 +220,13 @@ function ProductView({ product, categoryOptions, currentUserId }: ProductViewPro
   );
 }
 
-function ReviewCard({ review, currentUserId }: { review: ProductReview; currentUserId: number | null }) {
+function ReviewCard({
+  review,
+  currentUserId,
+}: {
+  review: ProductReview;
+  currentUserId: number | null;
+}) {
   return (
     <li className="review-card">
       {review.userPhoto ? (
@@ -163,7 +239,10 @@ function ReviewCard({ review, currentUserId }: { review: ProductReview; currentU
           unoptimized
         />
       ) : (
-        <span className="review-card__avatar review-card__avatar--empty" aria-hidden="true">
+        <span
+          className="review-card__avatar review-card__avatar--empty"
+          aria-hidden="true"
+        >
           {review.userName.charAt(0).toUpperCase()}
         </span>
       )}
@@ -173,8 +252,13 @@ function ReviewCard({ review, currentUserId }: { review: ProductReview; currentU
           <h3>{review.userName}</h3>
           <Stars rating={review.rating} />
         </div>
-        {review.comment && <p className="review-card__comment">{review.comment}</p>}
-        <ReviewComments target={{ kind: 'product', id: review.id }} currentUserId={currentUserId} />
+        {review.comment && (
+          <p className="review-card__comment">{review.comment}</p>
+        )}
+        <ReviewComments
+          target={{ kind: "product", id: review.id }}
+          currentUserId={currentUserId}
+        />
       </div>
     </li>
   );
@@ -183,9 +267,17 @@ function ReviewCard({ review, currentUserId }: { review: ProductReview; currentU
 function Stars({ rating }: { rating: number }) {
   const filled = Math.round(rating);
   return (
-    <span className="review-stars" role="img" aria-label={`Nota ${filled} de 5`}>
+    <span
+      className="review-stars"
+      role="img"
+      aria-label={`Nota ${filled} de 5`}
+    >
       {[1, 2, 3, 4, 5].map((star) => (
-        <span key={star} aria-hidden="true" className={star <= filled ? 'review-stars__on' : 'review-stars__off'}>
+        <span
+          key={star}
+          aria-hidden="true"
+          className={star <= filled ? "review-stars__on" : "review-stars__off"}
+        >
           ★
         </span>
       ))}
@@ -193,7 +285,11 @@ function Stars({ rating }: { rating: number }) {
   );
 }
 
-export default function ProdutoPage({ params }: { params: Promise<ProductParams> }) {
+export default function ProdutoPage({
+  params,
+}: {
+  params: Promise<ProductParams>;
+}) {
   return (
     <Suspense
       fallback={
