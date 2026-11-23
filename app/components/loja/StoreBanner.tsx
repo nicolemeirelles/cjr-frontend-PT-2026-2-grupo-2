@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Image from "next/image";
 import type { Store } from "@/lib/store";
 import EditStoreButton from "./EditStoreButton";
@@ -7,10 +8,12 @@ export default function StoreBanner({
   store,
   isOwner,
   categories,
+  addProductButton,
 }: {
   store: Store;
   isOwner: boolean;
   categories: StoreCategory[];
+  addProductButton?: ReactNode; 
 }) {
   return (
     <section
@@ -35,20 +38,7 @@ export default function StoreBanner({
       {isOwner && (
         <div className="store-actions">
           <EditStoreButton store={store} categories={categories} />
-          <button type="button" aria-label="Adicionar produto" disabled>
-            <svg
-              width="22"
-              height="22"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              aria-hidden="true"
-            >
-              <path d="M12 5v14M5 12h14" />
-            </svg>
-          </button>
+          {addProductButton}
         </div>
       )}
     </section>

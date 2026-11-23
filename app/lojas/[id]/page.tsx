@@ -7,6 +7,9 @@ import StoreBanner from "@/app/components/loja/StoreBanner";
 import StoreReviews from "@/app/components/loja/StoreReviews";
 import { getCurrentUser } from "@/lib/auth";
 import { getStore, getStoreCategories, parseStoreId } from "@/lib/store";
+import AddProductButton from "@/app/components/catalog/AddProductButton";
+import { getCatalog } from "@/lib/catalog/api";
+import { buildCategoryOptions } from "@/lib/catalog/category-options";
 import "./loja.css";
 
 const leagueSpartan = League_Spartan({ subsets: ["latin"], display: "swap" });
@@ -39,13 +42,29 @@ async function StoreContent({ params }: { params: Promise<{ id: string }> }) {
 
   const { store } = result;
   const isOwner = authenticated && session.user.id === store.ownerId;
-  const categories = isOwner ? await getStoreCategories() : [];
+  const [categories, catalog] = isOwner
+    ? await Promise.all([getStoreCategories(), getCatalog()])
+    : [[], null];
+
+  const productCategories =
+    catalog?.source === "api"
+      ? buildCategoryOptions(catalog.categories, store.categoryId)
+      : [];
 
   return (
     <div className={pageClass}>
       <Navbar authenticated={authenticated} demo={false} />
       <main>
-        <StoreBanner store={store} isOwner={isOwner} categories={categories} />
+        <StoreBanner
+          store={store}
+          isOwner={isOwner}
+          categories={categories}
+          addProductButton={
+            isOwner ? (
+              <AddProductButton storeId={store.id} categories={productCategories} />
+            ) : null
+          }
+        />
         <StoreReviews
           averageRating={store.averageRating}
           reviews={store.reviews}
