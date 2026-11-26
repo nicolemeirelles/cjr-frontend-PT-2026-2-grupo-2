@@ -4,7 +4,6 @@ import NavIcon from './NavIcon';
 import './catalog.css';
 export default function Navbar({
   authenticated,
-  demo,
   active,
 }: {
   authenticated: boolean;
@@ -14,7 +13,7 @@ export default function Navbar({
   return (
     <header className="catalog-navbar">
       <Link
-        href={demo ? '/?demo=1' : '/'}
+        href="/"
         aria-label="Stock.io — início"
         className="catalog-logo"
       >
@@ -28,13 +27,13 @@ export default function Navbar({
       </Link>
       <nav aria-label="Navegação principal" className="catalog-navlinks">
         <Link
-          href={demo ? '/?demo=1#categorias' : '/#categorias'}
+          href="/#categorias"
           aria-label="Explorar categorias"
         >
           <NavIcon name="bag" />
         </Link>
         <Link
-          href={demo ? '/?demo=1&view=lojas#produtos' : '/?view=lojas#produtos'}
+          href="/?view=lojas#produtos"
           aria-label="Explorar lojas"
         >
           <NavIcon name="store" />

@@ -1,6 +1,6 @@
 # Integração do feed
 
-A Home em `/` consulta o backend. `/?demo=1` continua sendo a demonstração identificada do Figma. A integração desta entrega se limita ao feed; a página de categoria pertence ao PR visual separado.
+A Home em `/` consulta o backend. Os produtos do protótipo e o modo de demonstração foram removidos.
 
 `API_URL` define o servidor. As rotas padrão são `GET /categorias`, `GET /produtos`, `GET /lojas` e `GET /imagens`. Os nomes podem ser configurados pelas variáveis do `.env.example`.
 

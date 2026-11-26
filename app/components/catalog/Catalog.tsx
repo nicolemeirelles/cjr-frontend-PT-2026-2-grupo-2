@@ -29,8 +29,7 @@ export default function Catalog({
   const [view, setView] = useState(
     initialView === 'lojas' ? 'lojas' : 'produtos',
   );
-  const demo = data.source === 'demo';
-  const suffix = demo ? '?demo=1' : '';
+
   const roots = data.categories.filter(
     (category) => category.parentId === null,
   );
@@ -86,14 +85,6 @@ export default function Catalog({
     roots.length === 0;
   return (
     <div className="catalog-content">
-      {demo && (
-        <div className="catalog-demo-note">
-          Demonstração com dados do protótipo.{' '}
-          <Link href={categoryId ? `/categorias/${categoryId}` : '/'}>
-            Usar dados da API
-          </Link>
-        </div>
-      )}
       <SearchBar query={query} onChange={setQuery} />
       {categoryId === undefined ? (
         <section
@@ -106,7 +97,7 @@ export default function Catalog({
             {roots.map((category) => (
               <Link
                 key={category.id}
-                href={`/categorias/${category.id}${suffix}`}
+                href={`/categorias/${category.id}`}
                 className="catalog-category-item"
               >
                 <Icon name={category.name} size={37} />
@@ -118,7 +109,7 @@ export default function Catalog({
       ) : (
         <div className="catalog-category-heading" id="categorias">
           <div className="catalog-breadcrumb">
-            <Link href={`/${suffix}`}>Início</Link>
+            <Link href="/">Início</Link>
             <span aria-hidden="true">/</span>
             <h2>{current?.name ?? 'Categoria'}</h2>
           </div>
@@ -195,20 +186,13 @@ export default function Catalog({
               <button onClick={() => window.location.reload()}>
                 Tentar novamente
               </button>
-              <Link
-                href={
-                  categoryId ? `/categorias/${categoryId}?demo=1` : '/?demo=1'
-                }
-              >
-                Ver demonstração do protótipo
-              </Link>
             </div>
           </div>
         )}
         {!data.error && categoryId !== undefined && !current && (
           <div className="catalog-message">
             <h2>Categoria não encontrada</h2>
-            <Link href={`/${suffix}`}>Voltar ao início</Link>
+            <Link href="/">Voltar ao início</Link>
           </div>
         )}
         {!data.error &&
@@ -276,12 +260,12 @@ export default function Catalog({
                   Produtos
                   <span>
                     em{' '}
-                    <Link href={`/categorias/${category.id}${suffix}`}>
+                    <Link href={`/categorias/${category.id}`}>
                       {category.name}
                     </Link>
                   </span>
                 </h2>
-                <Link href={`/categorias/${category.id}${suffix}`}>
+                <Link href={`/categorias/${category.id}`}>
                   ver mais
                 </Link>
               </div>
