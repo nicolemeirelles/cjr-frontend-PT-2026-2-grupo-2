@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import { createPortal } from 'react-dom';
 import { clientApi, getErrorMessage } from '@/lib/axios-client';
 import { uploadImage } from '@/lib/uploadimage';
 import './ModalProduct.css';
@@ -7,28 +8,25 @@ import './ModalProduct.css';
 export interface Category {
   id: number;
   name: string;
-  group?: string; 
+  group?: string;
 }
 
 interface CreateModalProductProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess?: () => void;
-  
   storeId: number;
-
   categories: Category[];
 }
-
 
 interface Photo {
   file: File;
   preview: string;
 }
 
-const MIN_STOCK = 0; 
+const MIN_STOCK = 0;
 const INITIAL_STOCK = 1;
-const MAX_PHOTO_SIZE = 5 * 1024 * 1024; 
+const MAX_PHOTO_SIZE = 5 * 1024 * 1024;
 
 export default function CreateProductModal({
   isOpen,
@@ -37,10 +35,9 @@ export default function CreateProductModal({
   storeId,
   categories,
 }: CreateModalProductProps) {
-  
-  const [photos, setPhotos] = useState<(Photo | null)[]>([null, null, null, null]); 
+  const [photos, setPhotos] = useState<(Photo | null)[]>([null, null, null, null]);
   const [name, setName] = useState('');
-  const [categoryId, setCategoryId] = useState(''); 
+  const [categoryId, setCategoryId] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
   const [stock, setStock] = useState(INITIAL_STOCK);
@@ -58,17 +55,14 @@ export default function CreateProductModal({
     document.addEventListener('keydown', handleKeyDown);
     document.body.style.overflow = 'hidden';
 
-    
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = previousOverflow;
     };
   }, [isOpen, onClose]);
 
-
   function handlePhotoChange(index: number, e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-    
     e.target.value = '';
     if (!file) return;
 
@@ -109,7 +103,7 @@ export default function CreateProductModal({
   }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault(); 
+    e.preventDefault();
     if (loading) return;
     setError('');
 
@@ -117,18 +111,19 @@ export default function CreateProductModal({
       setError('Adicione pelo menos a foto principal do produto.');
       return;
     }
-   
-    const files = photos.filter((photo): photo is Photo => photo !== null).map((photo) => photo.file);
+
+    const files = photos
+      .filter((photo): photo is Photo => photo !== null)
+      .map((photo) => photo.file);
 
     setLoading(true);
     try {
-      
       const imageUrls = await Promise.all(files.map((file) => uploadImage(file)));
 
       await clientApi.post('/api/produtos', {
         name: name.trim(),
-        description: description.trim() || undefined, 
-        price: Number(price), 
+        description: description.trim() || undefined,
+        price: Number(price),
         stock,
         category_id: Number(categoryId),
         store_id: storeId,
@@ -136,22 +131,28 @@ export default function CreateProductModal({
       });
 
       resetForm();
-      onSuccess?.(); 
+      onSuccess?.();
       onClose();
-    } catch (error) {
-      setError(getErrorMessage(error, 'Não foi possível adicionar o produto. Tente novamente.'));
+    } catch (err) {
+      setError(getErrorMessage(err, 'Não foi possível adicionar o produto. Tente novamente.'));
     } finally {
       setLoading(false);
     }
   }
 
+  if (!isOpen) return null;
 
-  if (!isOpen) return null; 
-  return (
+  // O portal tira o modal de dentro da página, então a fonte
+  // (League Spartan) precisa ser repassada manualmente.
+  const fontFamily = getComputedStyle(
+    document.querySelector('.catalog-page') ?? document.body,
+  ).fontFamily;
+
+  return createPortal(
     <div
       className="product-modal-overlay"
+      style={{ fontFamily }}
       onClick={(e) => {
-        
         if (e.target === e.currentTarget) onClose();
       }}
     >
@@ -162,8 +163,19 @@ export default function CreateProductModal({
         aria-labelledby="product-modal-title"
       >
         <button type="button" className="product-modal__close" aria-label="Fechar" onClick={onClose}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-            <path d="M5 5l14 14M19 5L5 19" />
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </button>
 
@@ -203,10 +215,10 @@ export default function CreateProductModal({
             disabled={categories.length === 0}
             required
           >
-            <option value="" disabled>
+            <option value="" disabled hidden>
               Subcategoria
             </option>
-                       {groupCategories(categories).map(([group, options]) =>
+            {groupCategories(categories).map(([group, options]) =>
               group ? (
                 <optgroup key={group} label={group}>
                   {options.map((category) => (
@@ -255,7 +267,18 @@ export default function CreateProductModal({
               disabled={stock <= MIN_STOCK}
               onClick={() => setStock((s) => Math.max(MIN_STOCK, s - 1))}
             >
-              −
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                aria-hidden="true"
+              >
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
             </button>
             <span className="product-modal__quantity-value" aria-live="polite">
               {stock}
@@ -266,7 +289,19 @@ export default function CreateProductModal({
               aria-label="Aumentar estoque"
               onClick={() => setStock((s) => s + 1)}
             >
-              +
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                aria-hidden="true"
+              >
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
             </button>
           </div>
 
@@ -281,7 +316,8 @@ export default function CreateProductModal({
           </button>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
@@ -302,18 +338,16 @@ interface PhotoSlotProps {
   onRemove: () => void;
 }
 
-
 function PhotoSlot({ photo, large, label, onSelect, onRemove }: PhotoSlotProps) {
   return (
     <div className={`photo-slot${large ? ' photo-slot--large' : ''}`}>
       <label className="photo-slot__label">
         {photo ? (
-          
           <img src={photo.preview} alt="Prévia da foto do produto" className="photo-slot__img" />
         ) : (
           <>
             <CameraPlusIcon />
-            {large && <span>Anexe as fotos do seu produto</span>}
+            {large && <span className="photo-slot__text">Anexe as fotos do seu produto</span>}
           </>
         )}
         <input
@@ -334,18 +368,17 @@ function PhotoSlot({ photo, large, label, onSelect, onRemove }: PhotoSlotProps) 
   );
 }
 
-
 function CameraPlusIcon() {
   return (
-    <svg width="40" height="40" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+    <svg width="34" height="30" viewBox="0 0 36 32" fill="none" aria-hidden="true">
       <path
-        fill="currentColor"
-        d="M17 8l-2.6 4H9a4 4 0 0 0-4 4v18a4 4 0 0 0 4 4h30a4 4 0 0 0 4-4V16a4 4 0 0 0-4-4h-5.4L31 8H17z"
+        d="M12 4L9.5 7.5H5C3.34315 7.5 2 8.84315 2 10.5V25.5C2 27.1569 3.34315 28.5 5 28.5H27C28.6569 28.5 30 27.1569 30 25.5V10.5C30 8.84315 28.6569 7.5 27 7.5H22.5L20 4H12Z"
+        fill="#7547F5"
       />
-      <circle cx="24" cy="25" r="8" fill="#fff" />
-      <circle cx="24" cy="25" r="5" fill="currentColor" />
-      <circle cx="38" cy="37" r="8" fill="#fff" />
-      <path d="M38 33v8M34 37h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="16" cy="18" r="6" fill="#FFFFFF" />
+      <circle cx="16" cy="18" r="3.5" fill="#7547F5" />
+      <circle cx="27" cy="22" r="5" fill="#FFFFFF" />
+      <path d="M27 19.5V24.5M24.5 22H29.5" stroke="#7547F5" strokeWidth="1.8" strokeLinecap="round" />
     </svg>
   );
 }

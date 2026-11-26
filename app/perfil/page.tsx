@@ -8,9 +8,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { demoBeautyProducts } from "@/lib/catalog/demo";
 import "./perfil.css";
 import { getUserProducts } from "@/lib/catalog/user-products";
-import AddProductButton from "@/app/components/catalog/AddProductButton";
-import { getCatalog } from '@/lib/catalog/api';
-import { getUserStore } from "@/lib/catalog/user-store";
+import { getCatalog } from "@/lib/catalog/api";
 import EditProfileButton from "@/app/components/perfil/EditProfileButton";
 import AddStoreButton from "@/app/components/loja/AddStoreButton";
 
@@ -31,25 +29,15 @@ async function ProfileContent({
     demo || !authenticated
       ? { status: "success" as const, products: demoBeautyProducts }
       : await getUserProducts(session.user.id);
-  const canAddProduct = authenticated && !demo; 
-  const catalog = canAddProduct ? await getCatalog() : null;
-  const userStore = canAddProduct ? await getUserStore(session.user.id) : null;
+  
+  const canLoadStore = authenticated && !demo;
+  const catalog = canLoadStore ? await getCatalog() : null;
   const apiCategories = catalog?.source === "api" ? catalog.categories : [];
-  const categoryNames = new Map(apiCategories.map((category) => [category.id, category.name]));
-  const subcategories = apiCategories.filter((category) => category.parentId !== null);
+  
   const storeCategories = apiCategories
     .filter((category) => category.parentId === null)
     .map(({ id, name }) => ({ id, name }));
-  const storeCategoryId = userStore?.categoryId ?? null;
-  const storeSubcategories = subcategories.filter((category) => category.parentId === storeCategoryId);
-  const categoryOptions =
-    storeSubcategories.length > 0
-      ? storeSubcategories.map(({ id, name }) => ({ id, name }))
-      : subcategories.map(({ id, name, parentId }) => ({
-          id,
-          name,
-          group: categoryNames.get(parentId ?? -1), 
-        }));
+
   return (
     <div className={`catalog-page profile-page ${leagueSpartan.className}`}>
       <Navbar authenticated={authenticated} demo={demo} active="perfil" />
@@ -151,14 +139,11 @@ async function ProfileContent({
           className="profile-products"
           aria-labelledby="profile-products-title"
         >
-       <div className="profile-products-heading">
+          <div className="profile-products-heading">
             <h2 id="profile-products-title">Produtos</h2>
             <div className="profile-products-actions">
-              {canAddProduct && (
-              <AddProductButton storeId={userStore?.id} categories={categoryOptions} />
-              )}
               <Link href="/#produtos">ver mais</Link>
-          </div>
+            </div>
           </div>
           {session.status === "unavailable" && (
             <p role="status" className="profile-demo-note">
