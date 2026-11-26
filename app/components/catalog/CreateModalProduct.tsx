@@ -142,8 +142,6 @@ export default function CreateProductModal({
 
   if (!isOpen) return null;
 
-  // O portal tira o modal de dentro da página, então a fonte
-  // (League Spartan) precisa ser repassada manualmente.
   const fontFamily = getComputedStyle(
     document.querySelector('.catalog-page') ?? document.body,
   ).fontFamily;
