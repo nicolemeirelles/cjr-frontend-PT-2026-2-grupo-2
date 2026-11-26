@@ -11,6 +11,7 @@ export type ProductReview = {
   id: number;
   rating: number;
   comment: string;
+  userId: number | null;
   userName: string;
   userPhoto: string | null;
 };
@@ -127,6 +128,7 @@ export async function getProductDetail(
         id: toNumber(item.id) ?? 0,
         rating: Math.min(5, Math.max(0, toNumber(item.rating) ?? 0)),
         comment: toText(item.comment),
+        userId: toNumber(user.id),
         userName:
           toText(user.name) || toText(user.username) || "Cliente Stock.io",
         userPhoto: toText(user.profile_picture_url) || null,

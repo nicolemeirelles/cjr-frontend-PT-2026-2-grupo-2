@@ -107,3 +107,16 @@
   cursor: pointer;
   box-shadow: 0 3px 4px #0003;
 }
+.product-reviews__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.review-card__edit .review-edit {
+  position: static;
+  background: none;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  padding: 4px;
+}

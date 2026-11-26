@@ -1,29 +1,41 @@
 "use client";
-import { useRef, useState, type FormEvent } from "react";
+import { useId, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import StarRating from "./StarRating";
 import "./review.css";
 
 type Props = {
-  storeId: number;
-  storeName: string;
+  /** "store" (padrão) avalia a loja; "product" avalia o produto. */
+  kind?: "store" | "product";
+  targetId: number;
+  targetName: string;
+  /** Se vier, o modal funciona em modo edição (Salvar / Deletar). */
   review?: { id: number; rating: number; comment: string | null };
+  /** Só para loja: para onde ir depois de deletar. */
   afterDeleteHref?: string;
 };
 
 export default function ReviewModal({
-  storeId,
-  storeName,
+  kind = "store",
+  targetId,
+  targetName,
   review,
   afterDeleteHref = "/",
 }: Props) {
   const router = useRouter();
+  const titleId = useId();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [rating, setRating] = useState(review?.rating ?? 0);
   const [text, setText] = useState(review?.comment ?? "");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
+
+  const isProduct = kind === "product";
+  const apiBase = isProduct ? "/api/avaliacoes-produto" : "/api/avaliacoes";
+  const idField = isProduct ? "product_id" : "store_id";
+  const triggerLabel = isProduct ? "Avaliar produto" : "Avaliar loja";
+  const fieldLabel = isProduct ? "Avaliação do produto" : "Avaliação da loja";
 
   function open() {
     setRating(review?.rating ?? 0);
@@ -68,22 +80,24 @@ export default function ReviewModal({
     const payload = { rating, comment: text };
 
     if (review) {
-      const saved = await send(
-        `/api/avaliacoes/${review.id}`,
-        "PATCH",
-        payload,
-      );
+      const saved = await send(`${apiBase}/${review.id}`, "PATCH", payload);
       if (!saved) return;
       close();
       router.refresh();
     } else {
-      const created = await send("/api/avaliacoes", "POST", {
+      const created = await send(apiBase, "POST", {
         ...payload,
-        store_id: storeId,
+        [idField]: targetId,
       });
       if (!created) return;
       close();
-      router.push(`/avaliacao/${created.id}`);
+      if (isProduct) {
+        setRating(0);
+        setText("");
+        router.refresh();
+      } else {
+        router.push(`/avaliacao/${created.id}`);
+      }
     }
   }
 
@@ -93,10 +107,11 @@ export default function ReviewModal({
       setConfirmDelete(true);
       return;
     }
-    const deleted = await send(`/api/avaliacoes/${review.id}`, "DELETE");
+    const deleted = await send(`${apiBase}/${review.id}`, "DELETE");
     if (!deleted) return;
     close();
-    router.push(afterDeleteHref);
+    if (isProduct) router.refresh();
+    else router.push(afterDeleteHref);
   }
 
   return (
@@ -125,14 +140,14 @@ export default function ReviewModal({
         </button>
       ) : (
         <button type="button" className="review-trigger" onClick={open}>
-          Avaliar loja
+          {triggerLabel}
         </button>
       )}
 
       <dialog
         ref={dialogRef}
         className="review-modal"
-        aria-labelledby="review-title"
+        aria-labelledby={titleId}
         onClose={() => setConfirmDelete(false)}
         onClick={(e) => {
           if (e.target === e.currentTarget) close();
@@ -158,15 +173,21 @@ export default function ReviewModal({
             </svg>
           </button>
 
-          <h2 id="review-title">
-            Você está avaliando <strong>{storeName}</strong>
+          <h2 id={titleId}>
+            Você está avaliando <strong>{targetName}</strong>
           </h2>
 
-          <StarRating value={rating} onChange={setRating} />
+          <StarRating
+            value={rating}
+            onChange={(n) => {
+              setRating(n);
+              setError(null);
+            }}
+          />
 
           <textarea
-            placeholder="Avaliação da loja"
-            aria-label="Avaliação da loja"
+            placeholder={fieldLabel}
+            aria-label={fieldLabel}
             maxLength={1000}
             value={text}
             onChange={(e) => setText(e.target.value)}
