@@ -18,6 +18,6 @@ export type Product = {
 export type CatalogData = {
   categories: Category[];
   products: Product[];
-  source: 'api' | 'demo';
+  source: 'api';
   error: string | null;
 };

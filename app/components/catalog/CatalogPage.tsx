@@ -1,7 +1,7 @@
 import { League_Spartan } from 'next/font/google';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { getDemoCatalog } from '@/lib/catalog/demo';
+import { getCatalog } from '@/lib/catalog/api';
 import type { CatalogData } from '@/lib/catalog/types';
 import { getCurrentUser } from '@/lib/auth';
 import Navbar from './Navbar';
@@ -10,7 +10,6 @@ import './catalog.css';
 import './category.css';
 const leagueSpartan = League_Spartan({ subsets: ['latin'], display: 'swap' });
 export type CatalogSearch = {
-  demo?: string;
   q?: string;
   view?: string;
 };
@@ -28,7 +27,7 @@ export function CatalogFallback() {
 export default async function CatalogPage({
   params,
   searchParams,
-  data = getDemoCatalog(),
+  data: providedData,
 }: {
   params?: Promise<{
     id: string;
@@ -37,7 +36,7 @@ export default async function CatalogPage({
   data?: CatalogData;
 }) {
   const [search, route] = await Promise.all([searchParams, params]);
-  const demo = data.source === 'demo';
+  const data = providedData ?? await getCatalog();
   const session = await getCurrentUser();
   const categoryId = route ? Number(route.id) : undefined;
   if (
@@ -53,7 +52,7 @@ export default async function CatalogPage({
       .toLowerCase() === 'eletronicos';
   return (
     <div className={`catalog-page ${leagueSpartan.className}`}>
-      <Navbar authenticated={session.status === 'authenticated'} demo={demo} />
+      <Navbar authenticated={session.status === 'authenticated'} demo={false} />
       <main>
         <section
           className={`catalog-hero ${electronics ? 'catalog-hero-electronics' : ''}`}

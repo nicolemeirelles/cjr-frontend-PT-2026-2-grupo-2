@@ -5,7 +5,6 @@ import { League_Spartan } from "next/font/google";
 import ProductCard from "@/app/components/catalog/ProductCard";
 import Navbar from "@/app/components/catalog/Navbar";
 import { getCurrentUser } from "@/lib/auth";
-import { demoBeautyProducts } from "@/lib/catalog/demo";
 import "./perfil.css";
 import { getUserProducts } from "@/lib/catalog/user-products";
 import { getCatalog } from "@/lib/catalog/api";
@@ -13,24 +12,16 @@ import EditProfileButton from "@/app/components/perfil/EditProfileButton";
 import AddStoreButton from "@/app/components/loja/AddStoreButton";
 
 const leagueSpartan = League_Spartan({ subsets: ["latin"], display: "swap" });
-type ProfileSearch = { demo?: string };
-
-async function ProfileContent({
-  searchParams,
-}: {
-  searchParams: Promise<ProfileSearch>;
-}) {
-  const search = await searchParams;
+async function ProfileContent() {
   const session = await getCurrentUser();
   const authenticated = session.status === "authenticated";
-  const demo = search.demo === "1" || !authenticated;
+
   const photoUrl = authenticated ? session.user.profile_picture_url : null;
-  const resultado =
-    demo || !authenticated
-      ? { status: "success" as const, products: demoBeautyProducts }
-      : await getUserProducts(session.user.id);
+  const resultado = authenticated
+    ? await getUserProducts(session.user.id)
+    : { status: "success" as const, products: [] };
   
-  const canLoadStore = authenticated && !demo;
+  const canLoadStore = authenticated;
   const catalog = canLoadStore ? await getCatalog() : null;
   const apiCategories = catalog?.source === "api" ? catalog.categories : [];
   
@@ -40,7 +31,7 @@ async function ProfileContent({
 
   return (
     <div className={`catalog-page profile-page ${leagueSpartan.className}`}>
-      <Navbar authenticated={authenticated} demo={demo} active="perfil" />
+      <Navbar authenticated={authenticated} demo={false} active="perfil" />
       <main>
         <div className="profile-banner">
           <Link
@@ -65,17 +56,7 @@ async function ProfileContent({
         </div>
         <section className="profile-details" aria-labelledby="profile-name">
           <div className="profile-user">
-            {demo ? (
-              <Image
-                className="profile-avatar"
-                src="/perfil/avatar.webp"
-                alt="Selena Gomez, perfil de demonstração"
-                width={230}
-                height={230}
-                unoptimized
-                priority
-              />
-            ) : photoUrl ? (
+            {photoUrl ? (
               <Image
                 className="profile-avatar"
                 src={photoUrl}
@@ -103,32 +84,20 @@ async function ProfileContent({
               </div>
             )}
             <h1 id="profile-name">
-              {demo
-                ? "Selena Gomez"
-                : authenticated
-                  ? session.user.name
-                  : "Nome do Usuário"}
+              {authenticated ? session.user.name : "Visitante"}
             </h1>
             <p className="profile-username">
               @{" "}
-              {demo
-                ? "selenagomez"
-                : authenticated
-                  ? session.user.username
-                  : "Nome de Perfil"}
+              {authenticated ? session.user.username : "Entre na sua conta"}
             </p>
             <p className="profile-email">
               <Image src="/email.svg" alt="" width={21} height={17} />
               <span>
-                {demo
-                  ? "selenamariegomez@rare.com"
-                  : authenticated
-                    ? session.user.email
-                    : "Email do Usuário"}
+                {authenticated ? session.user.email : ""}
               </span>
             </p>
           </div>
-          {authenticated && !demo && (
+          {authenticated && (
             <div className="profile-buttons">
               <EditProfileButton user={session.user} />
               <AddStoreButton categories={storeCategories} />
@@ -151,7 +120,9 @@ async function ProfileContent({
               instantes.
             </p>
           )}
-          {resultado.status === "unavailable" ? (
+          {!authenticated ? (
+            <p className="profile-demo-note"><Link href="/login">Entre na sua conta para visualizar seus produtos.</Link></p>
+          ) : resultado.status === "unavailable" ? (
             <p role="status" className="profile-demo-note">
               Não foi possível carregar seus produtos. Tente novamente em
               instantes.
@@ -162,7 +133,7 @@ async function ProfileContent({
             <div
               className="profile-product-row"
               role="region"
-              aria-label={demo ? "Produtos de demonstração" : "Seus produtos"}
+              aria-label="Seus produtos"
               tabIndex={0}
             >
               {resultado.products.map((produto) => (
@@ -170,22 +141,13 @@ async function ProfileContent({
               ))}
             </div>
           )}
-          {demo && (
-            <p className="profile-demo-note">
-              Perfil e produtos de demonstração do protótipo.
-            </p>
-          )}
         </section>
       </main>
     </div>
   );
 }
 
-export default function Perfil({
-  searchParams,
-}: {
-  searchParams: Promise<ProfileSearch>;
-}) {
+export default function Perfil() {
   return (
     <Suspense
       fallback={
@@ -194,7 +156,7 @@ export default function Perfil({
         </p>
       }
     >
-      <ProfileContent searchParams={searchParams} />
+      <ProfileContent />
     </Suspense>
   );
 }
