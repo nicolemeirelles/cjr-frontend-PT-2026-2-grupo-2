@@ -2,6 +2,7 @@ import { League_Spartan } from 'next/font/google';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { getCatalog } from '@/lib/catalog/api';
+import { categoryName, categorySlug } from '@/lib/catalog/category-navigation';
 import type { CatalogData } from '@/lib/catalog/types';
 import { getCurrentUser } from '@/lib/auth';
 import Navbar from './Navbar';
@@ -38,13 +39,14 @@ export default async function CatalogPage({
   const [search, route] = await Promise.all([searchParams, params]);
   const data = providedData ?? await getCatalog();
   const session = await getCurrentUser();
-  const categoryId = route ? Number(route.id) : undefined;
-  if (
-    categoryId !== undefined &&
-    (!Number.isSafeInteger(categoryId) || categoryId <= 0)
-  )
-    notFound();
-  const category = data.categories.find((item) => item.id === categoryId);
+  const fallbackName = route ? categoryName(route.id) : undefined;
+  const registered = fallbackName
+    ? data.categories.find((item) => item.parentId === null && categorySlug(item.name) === route?.id)
+    : undefined;
+  const categoryId = route ? fallbackName ? registered?.id ?? null : Number(route.id) : undefined;
+  if (categoryId !== undefined && categoryId !== null && (!Number.isSafeInteger(categoryId) || categoryId <= 0)) notFound();
+  const category = data.categories.find((item) => item.id === categoryId)
+    ?? (fallbackName ? { name: fallbackName } : undefined);
   const electronics =
     category?.name
       .normalize('NFD')
@@ -93,9 +95,10 @@ export default async function CatalogPage({
           </div>
         </section>
         <Catalog
-          key={`${categoryId ?? 'home'}:${search.q ?? ''}:${search.view ?? ''}`}
+          key={`${route?.id ?? 'home'}:${search.q ?? ''}:${search.view ?? ''}`}
           data={data}
           categoryId={categoryId}
+          categoryName={fallbackName}
           initialQuery={search.q}
           initialView={search.view}
         />
