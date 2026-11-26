@@ -130,8 +130,8 @@ async function ReviewContent({ params }: { params: Promise<{ id: string }> }) {
 
         {isAuthor && (
           <ReviewModal
-            storeId={store.id}
-            storeName={store.name}
+            targetId={store.id}
+            targetName={store.name}
             review={{
               id: review.id,
               rating: review.rating,

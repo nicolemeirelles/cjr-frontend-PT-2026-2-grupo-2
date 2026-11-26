@@ -169,14 +169,23 @@ function ProductView({
 
       <section className="product-reviews" aria-labelledby="reviews-title">
         <h2 id="reviews-title">Avaliações</h2>
-        {currentUserId !== null &&
-          !product.isOwner &&
-          product.storeId !== null && (
-            <ReviewModal
-              storeId={product.storeId}
-              storeName={product.storeName}
-            />
-          )}
+        {currentUserId !== null && !product.isOwner && (
+          <div className="product-reviews__actions">
+            {product.storeId !== null && (
+              <ReviewModal
+                targetId={product.storeId}
+                targetName={product.storeName}
+              />
+            )}
+            {!product.reviews.some((r) => r.userId === currentUserId) && (
+              <ReviewModal
+                kind="product"
+                targetId={product.id}
+                targetName={product.name}
+              />
+            )}
+          </div>
+        )}
         {product.reviews.length === 0 ? (
           <p className="product-reviews__empty">
             Este produto ainda não tem avaliações.
@@ -192,6 +201,8 @@ function ProductView({
                 key={review.id}
                 review={review}
                 currentUserId={currentUserId}
+                productId={product.id}
+                productName={product.name}
               />
             ))}
           </ul>
@@ -223,9 +234,13 @@ function ProductView({
 function ReviewCard({
   review,
   currentUserId,
+  productId,
+  productName,
 }: {
   review: ProductReview;
   currentUserId: number | null;
+  productId: number;
+  productName: string;
 }) {
   return (
     <li className="review-card">
@@ -251,6 +266,20 @@ function ReviewCard({
         <div className="review-card__header">
           <h3>{review.userName}</h3>
           <Stars rating={review.rating} />
+          {review.userId !== null && review.userId === currentUserId && (
+            <span className="review-card__edit">
+              <ReviewModal
+                kind="product"
+                targetId={productId}
+                targetName={productName}
+                review={{
+                  id: review.id,
+                  rating: review.rating,
+                  comment: review.comment || null,
+                }}
+              />
+            </span>
+          )}
         </div>
         {review.comment && (
           <p className="review-card__comment">{review.comment}</p>
