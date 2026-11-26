@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import type { StoreReview } from "@/lib/store";
 import Stars from "./Stars";
 
@@ -25,7 +26,11 @@ export default function StoreReviews({
             tabIndex={0}
           >
             {reviews.map((review) => (
-              <article className="store-review" key={review.id}>
+              <Link
+                className="store-review"
+                key={review.id}
+                href={`/avaliacao/${review.id}`}
+              >
                 {review.authorPhoto ? (
                   <Image
                     className="store-review-avatar"
@@ -54,7 +59,7 @@ export default function StoreReviews({
                   </div>
                   {review.comment && <p>{review.comment}</p>}
                 </div>
-              </article>
+              </Link>
             ))}
           </div>
         </>
