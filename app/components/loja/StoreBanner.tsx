@@ -16,19 +16,19 @@ export default function StoreBanner({
   addProductButton?: ReactNode; 
 }) {
   return (
-    <section
-      className={`store-banner${store.bannerUrl ? " store-banner--image" : ""}`}
-      aria-labelledby="store-name"
-    >
+    <section className="store-banner" aria-labelledby="store-name">
       {store.bannerUrl && (
-        <Image
-          className="store-banner-image"
-          src={store.bannerUrl}
-          alt=""
-          fill
-          priority
-          unoptimized
-        />
+        <>
+          <Image
+            className="store-banner-image"
+            src={store.bannerUrl}
+            alt=""
+            fill
+            priority
+            unoptimized
+          />
+          <div className="store-banner-shade" />
+        </>
       )}
       <div className="store-banner-title">
         <h1 id="store-name">{store.name}</h1>
