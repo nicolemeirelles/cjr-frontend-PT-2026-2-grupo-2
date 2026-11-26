@@ -5,9 +5,11 @@ import type { CatalogData, Category, Product } from '@/lib/catalog/types';
 import Icon from './Icon';
 import ProductCard from './ProductCard';
 import SearchBar from './SearchBar';
+import { categoryNavigation } from '@/lib/catalog/category-navigation';
 type Props = {
   data: CatalogData;
-  categoryId?: number;
+  categoryId?: number | null;
+  categoryName?: string;
   initialQuery?: string;
   initialView?: string;
 };
@@ -20,6 +22,7 @@ function normalize(value: string) {
 export default function Catalog({
   data,
   categoryId,
+  categoryName,
   initialQuery = '',
   initialView = 'produtos',
 }: Props) {
@@ -37,7 +40,7 @@ export default function Catalog({
     (category) => category.id === categoryId,
   );
   const children = data.categories.filter(
-    (category) => category.parentId === categoryId,
+    (category) => typeof categoryId === 'number' && category.parentId === categoryId,
   );
   const term = normalize(query.trim());
   function belongsTo(product: Product, target: number): boolean {
@@ -53,6 +56,7 @@ export default function Catalog({
     return false;
   }
   function matches(product: Product): boolean {
+    if (categoryId === null) return false;
     if (subcategory !== null && product.categoryId !== subcategory)
       return false;
     if (categoryId !== undefined && !belongsTo(product, categoryId))
@@ -94,10 +98,10 @@ export default function Catalog({
         >
           <h2 id="categories-title">Categoria</h2>
           <div className="catalog-category-list">
-            {roots.map((category) => (
+            {categoryNavigation(data.categories).map((category) => (
               <Link
-                key={category.id}
-                href={`/categorias/${category.id}`}
+                key={category.href}
+                href={category.href}
                 className="catalog-category-item"
               >
                 <Icon name={category.name} size={37} />
@@ -111,7 +115,7 @@ export default function Catalog({
           <div className="catalog-breadcrumb">
             <Link href="/">Início</Link>
             <span aria-hidden="true">/</span>
-            <h2>{current?.name ?? 'Categoria'}</h2>
+            <h2>{current?.name ?? categoryName ?? 'Categoria'}</h2>
           </div>
           <div className="catalog-category-tools">
             <div className="catalog-subcategories" aria-label="Subcategorias">
@@ -189,7 +193,7 @@ export default function Catalog({
             </div>
           </div>
         )}
-        {!data.error && categoryId !== undefined && !current && (
+        {!data.error && categoryId !== undefined && !current && !categoryName && (
           <div className="catalog-message">
             <h2>Categoria não encontrada</h2>
             <Link href="/">Voltar ao início</Link>
@@ -197,7 +201,7 @@ export default function Catalog({
         )}
         {!data.error &&
           products.length === 0 &&
-          (categoryId === undefined || current) && (
+          (categoryId === undefined || current || categoryName) && (
             <div className="catalog-message" role="status">
               <h2>
                 {term
