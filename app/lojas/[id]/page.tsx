@@ -106,4 +106,4 @@ export default function StorePage({ params }: PageProps<"/lojas/[id]">) {
       <StoreContent params={params} />
     </Suspense>
   );
-}4
+}

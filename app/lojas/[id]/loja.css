@@ -132,6 +132,15 @@
   border-radius: 35px;
   background: #f6f3e4;
   color: #080808;
+  text-decoration: none;
+  transition: box-shadow 0.15s;
+}
+.store-review:hover {
+  box-shadow: 0 0 0 3px #6a38f3;
+}
+.store-review:focus-visible {
+  outline: 3px solid #6a38f3;
+  outline-offset: 3px;
 }
 .store-review-avatar {
   flex-shrink: 0;
