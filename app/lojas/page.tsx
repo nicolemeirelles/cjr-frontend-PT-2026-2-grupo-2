@@ -26,7 +26,11 @@ async function StoresContent({
 
   return (
     <div className={`catalog-page stores-page ${leagueSpartan.className}`}>
-      <Navbar authenticated={session.status === "authenticated"} demo={false} />
+      <Navbar
+        authenticated={session.status === "authenticated"}
+        demo={false}
+        active="lojas"
+      />
       <main>
         <section
           className="stores-categories"

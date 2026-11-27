@@ -8,7 +8,7 @@ export default function Navbar({
 }: {
   authenticated: boolean;
   demo: boolean;
-  active?: 'perfil';
+  active?: 'perfil' | 'lojas';
 }) {
   return (
     <header className="catalog-navbar">
@@ -33,8 +33,9 @@ export default function Navbar({
           <NavIcon name="bag" />
         </Link>
         <Link
-          href="/?view=lojas#produtos"
+          href="/lojas"
           aria-label="Explorar lojas"
+          aria-current={active === 'lojas' ? 'page' : undefined}
         >
           <NavIcon name="store" />
         </Link>
