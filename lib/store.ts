@@ -132,15 +132,15 @@ type ApiStoreSummary = {
   id: number;
   name: string;
   category_id: number;
-  logo_url: string;
-  sticker_url: string;
+  logo_url: string | null;
+  sticker_url: string | null;
   category: { name: string };
 };
 
 export type StoreSummary = {
   id: number;
   name: string;
-  logoUrl: string;
+  logoUrl: string | null;
   categoryId: number;
   categoryName: string;
 };
@@ -157,7 +157,7 @@ export async function getStores(): Promise<StoreSummary[] | null> {
     return data.map((store) => ({
       id: store.id,
       name: store.name,
-      logoUrl: store.sticker_url || store.logo_url,
+      logoUrl: store.sticker_url || store.logo_url || null,
       categoryId: store.category_id,
       categoryName: store.category.name,
     }));
