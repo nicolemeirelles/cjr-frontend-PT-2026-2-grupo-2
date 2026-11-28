@@ -127,3 +127,41 @@ export async function getStoreCategories() {
     return [];
   }
 }
+
+type ApiStoreSummary = {
+  id: number;
+  name: string;
+  category_id: number;
+  logo_url: string;
+  sticker_url: string;
+  category: { name: string };
+};
+
+export type StoreSummary = {
+  id: number;
+  name: string;
+  logoUrl: string;
+  categoryId: number;
+  categoryName: string;
+};
+
+export async function getStores(): Promise<StoreSummary[] | null> {
+  try {
+    const response = await fetch(backendUrl("/lojas"), {
+      cache: "no-store",
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!response.ok) return null;
+
+    const data: ApiStoreSummary[] = await response.json();
+    return data.map((store) => ({
+      id: store.id,
+      name: store.name,
+      logoUrl: store.sticker_url || store.logo_url,
+      categoryId: store.category_id,
+      categoryName: store.category.name,
+    }));
+  } catch {
+    return null;
+  }
+}
