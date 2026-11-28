@@ -69,14 +69,20 @@ export default function StoreList({
           {filtered.map((store) => (
             <li key={store.id}>
               <Link href={`/lojas/${store.id}`} className="stores-item">
-                <Image
-                  className="stores-logo"
-                  src={store.logoUrl}
-                  alt=""
-                  width={120}
-                  height={120}
-                  unoptimized
-                />
+                {store.logoUrl ? (
+                  <Image
+                    className="stores-logo"
+                    src={store.logoUrl}
+                    alt=""
+                    width={120}
+                    height={120}
+                    unoptimized
+                  />
+                ) : (
+                  <span className="stores-logo stores-logo-empty">
+                    <Icon name="store" size={44} />
+                  </span>
+                )}
                 <span className="stores-name">{store.name}</span>
                 <span className="stores-category">{store.categoryName}</span>
               </Link>

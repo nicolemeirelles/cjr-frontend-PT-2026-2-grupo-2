@@ -54,6 +54,12 @@
   background: #fff;
   transition: transform 0.15s ease;
 }
+.stores-logo-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a98dff;
+}
 .stores-item:hover .stores-logo {
   transform: translateY(-3px);
 }
